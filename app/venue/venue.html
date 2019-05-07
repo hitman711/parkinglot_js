@@ -1,0 +1,154 @@
+<div class="container">
+  
+      <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-2 text-left">
+                <h4>Parking list</h4>
+            </div>
+            <div class='col-md-6'>
+              <ul></ul>
+            </div>
+            <div class='col-md-4'>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <span>Hello {{vm.full_name}},</span>
+                        <a 
+                            class="btn btn-sm btn-danger"
+                            style="color:white !important" ng-click="vm.SignOut()">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+              <div class="row">
+                <div class="col">
+                  <form class="form-group" ng-submit="vm.VenueSearch()">
+                  <input type="text" 
+                    class="form-control" 
+                    placeholder="Parking no. floor no., building name etc"
+                    ng-model="vm.venue_search.search"/>
+                  </form>
+                </div>
+                <div class="col">
+                    <form class="form-group" ng-submit="vm.VenueSearch()">
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" id="dropdown" role="button" data-toggle="dropdown" data-target=".dropdown" href="#">
+                          <div class="input-group">
+                            <input type="text" id="date" data-date-time-input="YYYY-MM-DD HH:mm A" 
+                            name="date" class="form-control" data-ng-model="vm.venue_search.available">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                          </div>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                          <datetimepicker data-ng-model="vm.venue_search.available" 
+                              data-datetimepicker-config="{ dropdownSelector: '#dropdown' }"
+                          ></datetimepicker>
+                        </ul>
+                      </div>
+                    </form>
+                </div>
+                <div class="col text-left">
+                  <button class='btn btn-md btn-danger' ng-click="vm.VenueSearchReset()">Reset</button>
+                </div>
+              </div>
+          </form>
+      </div>
+      <div class="col-md-12">
+          <div class="row">
+            <div class="col-xs form-group">
+                <button 
+                    class='btn btn-primary' 
+                    ng-disabled="vm.venue_list.previous===''" 
+                    ng-click='vm.VenueList(vm.venue_list.previous)'>Previous</button>
+
+                    <button 
+                    class='btn btn-primary' 
+                    ng-disabled="vm.venue_list.next===''"
+                    ng-click='vm.VenueList(vm.venue_list.next)'>Next</button>
+            </div>
+            <div class="col-sm text-center">
+                <p class="text-center">
+                    Current record:-{{vm.venue_list.results.length}}
+                </p>              
+            </div>
+            <div class="col-xs text-right">
+                <p class="text-right">
+                    Total record found:-{{vm.venue_list.count}}
+                </p>
+            </div>
+          </div>
+      </div>
+
+      <div class="col-md-12">
+          <div class="row">
+              <div ng-repeat="task in vm.venue_list.results" class='col-xs-1 parking-available'>
+                  <h5 class='text-left' ng-show='task.company_name'>{{task.company_name}}</h5>
+                  <h5 class='text-left'>{{task.name}}</h5>
+                  <button 
+                    class="btn btn-primary"
+                    data-title="Booking" 
+                    data-toggle="modal" 
+                    data-target="#booking" 
+                    ng-click="vm.VenueDetail(task.id)">
+                      Booking
+                  </button>
+              </div>
+          </div>
+      </div>
+    </div>
+</div>
+      
+<div 
+  class="modal fade" id="booking" tabindex="-1" role="dialog" 
+  aria-labelledby="booking" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <p>{{vm.venue_detail.name}}</p> 
+        </div>
+        <div class="modal-body">
+            <div class='row'>
+                <div class="col-md-6">
+                    <input class="form-control" type="text" ng-model="vm.reservation.license" />
+                  </div>
+                  <div class="col-md-6">
+                      <input class='form-control' type='text' ng-model='vm.reservation.phone_number'/>
+                  </div>
+            </div>
+            <div class='row'>
+                <div class="col-md-6" uib-timepicker ng-model="vm.reservation.book_from"></div>
+                <div class="col-md-6" uib-timepicker ng-model="vm.reservation.book_to"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                  <input class='form-control' 
+                  type='number' ng-model='vm.reservation.payments[0].amount' />
+              </div>
+              <div class='col-md-6'>
+                  <select 
+                  class="form-control" 
+                  ng-model='vm.reservation.payments[0].payment_type'>
+                  <option 
+                    ng-repeat="item in vm.payment_type" 
+                    value="{{item.key}}">{{item.value}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+                <div class='col-md-12 text-center'>
+                    <br/>
+                    <button 
+                    class="btn btn-success" 
+                    ng-click='vm.CreateReservation()'>Booked</button>
+                </div>
+            </div>
+          </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+      <!-- /.modal-content --> 
+    </div>
+      <!-- /.modal-dialog --> 
+  </div>
+  
