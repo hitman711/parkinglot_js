@@ -1,7 +1,7 @@
 /* Module inititalization */
 (function (angular) {
 
-	"use strict";
+    "use strict";
 
     angular.module('parkinglot', [
         'ui.router',
@@ -12,6 +12,7 @@
         'ngSanitize',
         'ui.bootstrap.datetimepicker',
         'ui.dateTimeInput',
+        'moment-picker'
     ]);
-    
+
 })(window.angular);

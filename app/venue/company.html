@@ -1,0 +1,186 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <ul class='nav-header'>
+                <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
+                <li ng-show='vm.company_count' class="nav-field"><a ng-href="company">My Company</a></li>
+                <li ng-show='vm.company_count' class="nav-field"><a ng-href="reservation">Reservations</a></li>
+                <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
+                        ng-click="vm.SignOut()">Sign
+                        Out</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <br />
+            <ul class='search-header'>
+                <li class="nav-field col-sm-4">
+                    <form class="form-group" ng-submit='vm.CompanyList()'>
+                        <input type='text' class='form-control' ng-model="vm.company_search.search" placeholder="Parking no. floor no., building name etc" />
+                    </form>
+
+                </li>
+                <li class="nav-field">
+                    <button class='btn btn-md btn-danger' ng-click="vm.CompanySearchReset()">Reset</button>
+                </li>
+                <li class="nav-field">
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <br />
+            <ul class='info-header'>
+                <li class="nav-field col-xs-2">
+                    <button class='btn btn-primary' ng-disabled="vm.venue_list.previous===''" ng-click='vm.VenueList(vm.venue_list.previous)'>Previous</button>
+                </li>
+                <li class="nav-field col-xs-2">
+                    &nbsp;
+                    <button class='btn btn-primary' ng-disabled="!vm.venue_list.next" ng-click='vm.VenueList(vm.venue_list.next)'>Next</button>
+                </li>
+                <li class="nav-field col-sm-4">
+                    <p class="text-center">
+                        Current record:-{{vm.venue_list.results.length}}
+                    </p>
+                </li>
+                <li class="nav-field col-sm-6">
+                    <p class="text-right">
+                        Total record found:-{{vm.venue_list.count}}
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <br />
+            <table class="table table-striped">
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Parking count</th>
+                    <th class="text-center">Action</th>
+                </tr>
+                <tr ng-repeat='company in vm.company_list'>
+                    <td ng-click="venueArch(company.id)" data-toggle="modal" data-target="#architectureview">{{company.id}}</td>
+                    <td ng-click="venueArch(company.id)" data-toggle="modal" data-target="#architectureview">{{company.name}}</td>
+                    <td>{{company.available_lot}}</td>
+                    <td class="text-center">
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#addvenue" ng-click="vm.FetchPrice(company.id)">
+                            Add Venue
+                        </button>
+                        <button class="btn btn-info" data-toggle="modal" data-target="#addprice">
+                            Add Price
+                        </button>
+                        <button class="btn btn-success" data-toggle="modal" data-target="#booking">
+                            Booking
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="modal fade" id="addvenue" tabindex="-1" role="dialog" aria-labelledby="addvenue" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                Add Venue
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class='form-control' type='text' ng-model='vm.add_venue.name' placeholder="Venue name" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <br />
+                        <select class='form-control' ng-model='vm.add_venue.category' placeholder="Set booking duration unit">
+                            <option ng-repeat="item in vm.venue_category" value="{{item.key}}">{{item.value}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <br />
+                        <select class='form-control' ng-model='vm.add_venue.price' placeholder="Select price set">
+                            <option ng-repeat="item in vm.company_price_list" value="{{item.id}}">{{item.name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class='col-md-12 text-center'>
+                        <br />
+                        <button class="btn btn-success" ng-click='vm.CreateVenue()'>Create Venue</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="addprice" tabindex="-1" role="dialog" aria-labelledby="addprice" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                Add Price
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class='form-control' type='text' ng-model='vm.add_price.name' placeholder="Price name" />
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <br />
+                        <input class='form-control' type='text' ng-model='vm.add_price.duration' placeholder="Set booking duration" />
+                    </div>
+                    <div class="col-md-6">
+                        <br />
+                        <select class='form-control' ng-model='vm.add_price.duration_unit' placeholder="Set booking duration unit">
+                            <option ng-repeat="item in vm.duration_unit" value="{{item.key}}">{{item.key}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <br />
+                        <input type='text' ng-model='vm.add_price.pre_paid_amount' placeholder="Pre paid amount" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <br />
+                        <input type='text' ng-model='vm.add_price.amount' placeholder="Total amount" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <br />
+                        <input type='text' ng-model='vm.add_price.overdue_amount' placeholder="Overdue amount" class="form-control" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class='col-md-12 text-center'>
+                        <br />
+                        <button class="btn btn-success">Create Price</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

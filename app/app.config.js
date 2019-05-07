@@ -1,10 +1,10 @@
-(function(angular){
+(function (angular) {
 
-	"use strict";
+    "use strict";
 
-	function config(
+    function config(
         $stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, $provide) {
-		// body...
+        // body...
         $locationProvider.html5Mode({
             enabled: true,
             requireBase: false
@@ -20,48 +20,48 @@
         $urlRouterProvider.otherwise("/404");
 
         $stateProvider
-        .state('login', {
-        	url: '/',
-        	templateUrl: 'app/user/login.html',
-        	controller: 'userCtrl',
-        	controllerAs: 'vm'
-        })
-        .state('signup', {
-        	url: '/signup',
-        	templateUrl: 'app/user/signup.html',
-        	controller: 'userCtrl',
-        	controllerAs: 'vm'
-        })
-        .state('venue', {
-            url: '/venue',
-            templateUrl: 'app/venue/venue.html',
-            controller: 'venueCtrl',
-            controllerAs: 'vm'
-        })
-        // .state('architecture', {
-        // 	url: '/arch',
-        // 	templateUrl: 'app/task/task.html',
-        // 	controller: 'venueCtrl',
-        // 	controllerAs: 'vm'
-        // })
-        // .state('booking', {
-        // 	url: '/booking',
-        // 	templateUrl: 'app/venue/venue.html',
-        // 	controller: 'venueCtrl',
-        // 	controllerAs: 'vm'
-        // })
-        .state('404', {
-        	url: '/404',
-        	templateUrl: 'app/404.html'
-        })
-	};
+            .state('login', {
+                url: '/',
+                templateUrl: 'app/user/login.html',
+                controller: 'userCtrl',
+                controllerAs: 'vm'
+            })
+            .state('signup', {
+                url: '/signup',
+                templateUrl: 'app/user/signup.html',
+                controller: 'userCtrl',
+                controllerAs: 'vm'
+            })
+            .state('venue', {
+                url: '/venue',
+                templateUrl: 'app/venue/venue.html',
+                controller: 'venueCtrl',
+                controllerAs: 'vm'
+            })
+            .state('company', {
+                url: '/company',
+                templateUrl: 'app/venue/company.html',
+                controller: 'venueCtrl',
+                controllerAs: 'vm'
+            })
+            // .state('booking', {
+            // 	url: '/booking',
+            // 	templateUrl: 'app/venue/venue.html',
+            // 	controller: 'venueCtrl',
+            // 	controllerAs: 'vm'
+            // })
+            .state('404', {
+                url: '/404',
+                templateUrl: 'app/404.html'
+            })
+    };
 
-	angular.module('parkinglot').config([
-		'$stateProvider',
+    angular.module('parkinglot').config([
+        '$stateProvider',
         '$urlRouterProvider',
-		'$httpProvider',
+        '$httpProvider',
         '$locationProvider',
-		'$provide',
-		config]);
+        '$provide',
+        config]);
 
 })(window.angular);

@@ -5,6 +5,46 @@ body {
 body {
   background-color: #f5f5f5; }
 
+.nav-header {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  background-color: black; }
+
+.search-header {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  background-color: #f3f3f3; }
+
+.info-header {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  background-color: #f3f3f3; }
+
+.nav-field {
+  float: left; }
+
+.nav-field-right {
+  float: right; }
+
+.nav-field a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none; }
+
+.nav-field a:hover {
+  background-color: #111; }
+
 .form-center {
   display: -ms-flexbox;
   display: -webkit-box;
