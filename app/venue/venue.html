@@ -4,10 +4,13 @@
             <ul class='nav-header'>
                 <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
                 <li ng-show='vm.company_count' class="nav-field"><a ng-href="company">My Company</a></li>
-                <li ng-show='vm.company_count' class="nav-field"><a ng-href="price">Reservations</a></li>
+                <li ng-show='vm.company_count' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-show='vm.my_reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
                 <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
                         ng-click="vm.SignOut()">Sign
                         Out</a></li>
+                <li class="nav-field" style="float:right; padding-right: 10px"><a class="btn btn-md btn-success" style='color: white'
+                        data-toggle="modal" data-target="#company">CreateCompany</a></li>
             </ul>
         </div>
     </div>
@@ -77,7 +80,6 @@
                     ng-click="vm.VenueDetail(task.id)">
                     Booking
                 </button>
-
             </div>
         </div>
     </div>
@@ -94,13 +96,13 @@
             <div class="modal-body">
                 <div class="row" ng-show='vm.venue_detail.price'>
                     <div class="col-md-6">
-                        <label class="form-control">
+                        <label class="form-control" style="border:none !important">
                             Parking price : {{vm.venue_detail.price.amount}}
                         </label>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-control">
-                            For {{vm.venue_detail.price.duration}} / {{vm.venue_detail.price.duration_unit}}
+                        <label class="form-control" style="border:none !important">
+                            For {{vm.venue_detail.price.duration}} {{vm.venue_detail.price.duration_unit}}
                         </label>
                     </div>
                 </div>
@@ -132,20 +134,20 @@
                 </div>
 
                 <div class='row'>
-                    <div class="input-group col-md-6" moment-picker="vm.reservation.book_from" format="HH:mm A">
+                    <div class="input-group col-md-6" moment-picker="vm.reservation.book_from" format="YYYY-MM-DD hh:mm:ss A">
                         <span class="input-group-addon">
                             <i class="octicon octicon-clock"></i>
                         </span>
-                        <input class="form-control" placeholder="Select a time" ng-model="vm.reservation.book_from"
+                        <input class="form-control" required="" placeholder="Select a time" ng-model="vm.reservation.book_from"
                             ng-model-options="{ updateOn: 'blur' }">
                     </div>
 
 
-                    <div class="input-group col-md-6" moment-picker="vm.reservation.book_to" format="HH:mm A">
+                    <div class="input-group col-md-6" moment-picker="vm.reservation.book_to" format="YYYY-MM-DD hh:mm:ss A">
                         <span class="input-group-addon">
                             <i class="octicon octicon-clock"></i>
                         </span>
-                        <input class="form-control" placeholder="Select a time" ng-model="vm.reservation.book_to"
+                        <input class="form-control" required="" placeholder="Select a time" ng-model="vm.reservation.book_to"
                             ng-model-options="{ updateOn: 'blur' }">
                     </div>
                 </div>
@@ -165,7 +167,9 @@
                 <div class="row">
                     <div class='col-md-12 text-center'>
                         <br />
-                        <button class="btn btn-success" ng-click='vm.CreateReservation()'>Booked</button>
+                        <button class="btn btn-success" ng-disabled='
+                        vm.reservation.book_to =="" && vm.reservation.book_to =="" && vm.reservation.phone_number=="" && vm.reservation.license  == ""'
+                            ng-click='vm.CreateReservation()'>Booked</button>
                     </div>
                 </div>
             </div>
@@ -176,3 +180,30 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+<div class="modal fade" id="company" tabindex="-1" role="dialog" aria-labelledby="company" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                Create Company
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class='form-control' type='text' ng-model='vm.company_detail.name' placeholder="Company name" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class='col-md-12 text-center'>
+                        <br />
+                        <button class="btn btn-success" ng-click='vm.CreateCompany()'>Create Company</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->

@@ -44,12 +44,24 @@
                 controller: 'venueCtrl',
                 controllerAs: 'vm'
             })
-            // .state('booking', {
-            // 	url: '/booking',
-            // 	templateUrl: 'app/venue/venue.html',
-            // 	controller: 'venueCtrl',
-            // 	controllerAs: 'vm'
-            // })
+            .state('reservations', {
+                url: '/reservations',
+                templateUrl: 'app/venue/reservation.html',
+                controller: 'venueCtrl',
+                controllerAs: 'vm'
+            })
+            .state('my-reservation', {
+                url: '/my-reservation',
+                templateUrl: 'app/venue/my-reservation.html',
+                controller: 'venueCtrl',
+                controllerAs: 'vm'
+            })
+            .state('prices', {
+                url: '/prices',
+                templateUrl: 'app/venue/prices.html',
+                controller: 'venueCtrl',
+                controllerAs: 'vm'
+            })
             .state('404', {
                 url: '/404',
                 templateUrl: 'app/404.html'

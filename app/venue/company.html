@@ -4,13 +4,17 @@
             <ul class='nav-header'>
                 <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
                 <li ng-show='vm.company_count' class="nav-field"><a ng-href="company">My Company</a></li>
-                <li ng-show='vm.company_count' class="nav-field"><a ng-href="reservation">Reservations</a></li>
+                <li ng-show='vm.company_count' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-show='vm.my_reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
                 <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
                         ng-click="vm.SignOut()">Sign
                         Out</a></li>
+                <li class="nav-field" style="float:right; padding-right: 10px"><a class="btn btn-md btn-success" style='color: white'
+                        data-toggle="modal" data-target="#company">CreateCompany</a></li>
             </ul>
         </div>
     </div>
+
     <div class="row">
         <div class="col-md-12">
             <br />
@@ -46,7 +50,7 @@
                         Current record:-{{vm.venue_list.results.length}}
                     </p>
                 </li>
-                <li class="nav-field col-sm-6">
+                <li class="nav-field col-sm-4">
                     <p class="text-right">
                         Total record found:-{{vm.venue_list.count}}
                     </p>
@@ -96,13 +100,15 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <input class='form-control' type='text' ng-model='vm.add_venue.name' placeholder="Venue name" />
+                        <input class='form-control' type='text' ng-model='vm.add_venue.name' placeholder="Venue name*"
+                            required />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <br />
-                        <select class='form-control' ng-model='vm.add_venue.category' placeholder="Set booking duration unit">
+                        <select class='form-control' ng-model='vm.add_venue.category'>
+                            <option value="" selected disabled hidden required>Select category*</option>
                             <option ng-repeat="item in vm.venue_category" value="{{item.key}}">{{item.value}}</option>
                         </select>
                     </div>
@@ -110,7 +116,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <br />
-                        <select class='form-control' ng-model='vm.add_venue.price' placeholder="Select price set">
+                        <select class='form-control' ng-model='vm.add_venue.price'>
+                            <option value="" selected disabled hidden>Select price set</option>
                             <option ng-repeat="item in vm.company_price_list" value="{{item.id}}">{{item.name}}</option>
                         </select>
                     </div>
@@ -178,6 +185,33 @@
                 </div>
             </div>
             <div class="modal-footer">
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="company" tabindex="-1" role="dialog" aria-labelledby="company" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                Create Company
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class='form-control' type='text' ng-model='vm.company_detail.name' placeholder="Company name" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class='col-md-12 text-center'>
+                        <br />
+                        <button class="btn btn-success" ng-click='vm.CreateCompany()
+                        '>Create
+                            Company</button>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- /.modal-content -->

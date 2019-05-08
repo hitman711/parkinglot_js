@@ -8,8 +8,9 @@
     function venueCtrl(
         $state, $window, $filter, toaster, DOMAIN,
         COMPANY, COMPANY_DETAIL, ARCHITECTURE, VENUE,
-        PRICE, PRICE_DETAIL, VENUE_DETAIL,
-        RESERVATION, VENUE_SEARCH, RESERVATION_DETAIL, serviceApi) {
+        PRICE, PRICE_DETAIL, VENUE_DETAIL, DETAIL,
+        RESERVATION, COMPANY_RESERVATION, VENUE_SEARCH,
+        RESERVATION_DETAIL, serviceApi) {
 
         var vm = this;
         Date.prototype.getUnixTime = function () { return this.getTime() / 1000 | 0 };
@@ -23,15 +24,20 @@
             'available': new Date()
         }
 
-        vm.venue_list = {}
-        vm.company_search = {}
-        vm.company_list = []
-        vm.venue_detail = {}
-        vm.reservation_list = {}
-        vm.reservation_detail = {}
+        vm.venue_list = {};
+        vm.company_search = {};
+        vm.company_list = [];
+        vm.company_detail = {
+            'id': '',
+            'name': ''
+        }
+        vm.venue_detail = {};
+        vm.reservation_list = {};
+        vm.reservation_detail = {};
 
         vm.reservation = {
             'id': '',
+            'date': '',
             'book_from': new Date(),
             'book_to': '',
             'license': '',
@@ -42,6 +48,14 @@
                 'payment_type': 'free'
             }]
         }
+
+        vm.reservation_status_type = [
+            { 'key': 'pending', 'value': 'Pending' },
+            { 'key': 'booked', 'value': 'Booked' },
+            { 'key': 'active', 'value': 'Active' },
+            { 'key': 'closed', 'value': 'Closed' },
+            { 'key': 'canceled', 'value': 'Canceled' },
+        ]
         vm.payment_type = [
             { 'key': 'cash', 'value': 'Cash' },
             { 'key': 'free', 'value': 'Free' },
@@ -122,12 +136,21 @@
                 DOMAIN + ARCHITECTURE.replace(
                     '{company_id}', vm.company_detail.id
                 ), vm.add_venue, true)
-                .then(function (response) {
-                    vm.venue_detail = response.data;
-                },
+                .then(
                     function (response) {
-                        var data = response.data;
-                    })
+                        vm.venue_detail = response.data;
+                    },
+                    function (response) {
+                        if ("non_field_errors" in data) {
+                            toaster.pop("error", data["non_field_errors"][0]);
+                        } else {
+                            angular.forEach(data, function (value, key) {
+                                vm.field_error = true;
+                                vm.sign_up_error[key] = value[0]
+                            });
+                        }
+                    }
+                )
         }
 
         vm.CompanyList = function () {
@@ -142,10 +165,19 @@
             serviceApi.getData(url, {}, true)
                 .then(function (response) {
                     vm.company_list = response.data['results'];
-                },
+                });
+        }
+
+        vm.CreateCompany = function () {
+            serviceApi.postData(DOMAIN + COMPANY, vm.company_detail, true)
+                .then(
                     function (response) {
-                        // Erro handler
-                        var data = response.data;
+                        vm.company_detail = response.data;
+                        vm.user_detail();
+                        vm.company_list.push(response.data);
+                        toaster.pop("success", "Company create successfully");
+                    },
+                    function (response) {
                         if ("non_field_errors" in data) {
                             toaster.pop("error", data["non_field_errors"][0]);
                         } else {
@@ -160,6 +192,7 @@
         if ($window.localStorage.getItem('company_count') > 0) {
             vm.CompanyList();
             vm.company_count = $window.localStorage.getItem('company_count');
+            vm.reservation_count = $window.localStorage.getItem('reservation_count');
         } else {
             vm.company_count = '';
 
@@ -241,15 +274,21 @@
         }
 
         vm.CreateReservation = function () {
-            console.info(vm.reservation);
             var reservation = angular.copy(vm.reservation);
-            reservation.book_from = reservation.book_from.getUnixTime();
-            reservation.book_to = reservation.book_to.getUnixTime();
+            reservation.book_from = new Date(reservation.book_from).getUnixTime();
+            reservation.book_to = new Date(reservation.book_to).getUnixTime();
             serviceApi.postData(DOMAIN + RESERVATION, reservation, true)
                 .then(function (response) {
                     vm.reservation_detail = response.data;
                 }, function (response) {
-                    var data = response.data;
+                    if ("non_field_errors" in data) {
+                        toaster.pop("error", data["non_field_errors"][0]);
+                    } else {
+                        angular.forEach(data, function (value, key) {
+                            vm.field_error = true;
+                            vm.sign_up_error[key] = value[0]
+                        });
+                    }
                 })
         }
 
@@ -257,18 +296,73 @@
             serviceApi.getData(DOMAIN + RESERVATION_DETAIL, {}, true)
                 .then(function (response) {
                     vm.reservation_detail = response.data;
-                }, function (response) {
-                    var data = response.data;
+                });
+        }
+
+        vm.UpdateReservation = function (reservation_id, status) {
+            serviceApi.patchData(DOMAIN + RESERVATION_DETAIL.replace('{reservation_id}', reservation_id), { 'status': status }, true)
+                .then(function (response) {
+                    vm.reservation_detail = response.data;
+                });
+        }
+
+        vm.MyReservationList = function () {
+            serviceApi.getData(DOMAIN + RESERVATION, {}, true)
+                .then(function (response) {
+                    vm.reservation_list = response.data;
                 })
         }
+
+        vm.CompanyReservationList = function () {
+            var url = DOMAIN + COMPANY_RESERVATION;
+            if (vm.reservation_search) {
+                var search = angular.copy(vm.reservation_search);
+                if (search['from']) {
+                    search['from'] = new Date(search['from']).getUnixTime();
+                }
+                if (search['to']) {
+                    search['to'] = new Date(search['to']).getUnixTime();
+                }
+                var query_param = new URLSearchParams(search);
+                if (query_param) {
+                    url = url + "?" + query_param.toString();
+                }
+            }
+            serviceApi.getData(DOMAIN + COMPANY_RESERVATION, {}, true)
+                .then(function (response) {
+                    vm.reservation_list = response.data;
+                })
+        }
+
+        vm.user_detail = function () {
+            serviceApi.getData(DOMAIN + DETAIL, {}, true)
+                .then(function (response) {
+                    $window.localStorage.setItem('token', response.data.authentication_code);
+                    $window.localStorage.setItem('email', response.data.email);
+                    $window.localStorage.setItem('full_name', '');
+                    $window.localStorage.setItem('company_count', response.data.company_count);
+                    vm.company_count = $window.localStorage.getItem('company_count');
+                    vm.reservation_count = $window.localStorage.getItem('reservation_count');
+                })
+        }
+
+        if ($state.current.name == 'reservations') {
+            vm.CompanyReservationList();
+        } else if ($state.current.name == 'my-reservations') {
+            vm.MyReservationList();
+        }
+
+        vm.user_detail();
     }
+
 
     angular.module('parkinglot').controller(
         'venueCtrl', [
             '$state', '$window', '$filter', 'toaster', 'DOMAIN',
             'COMPANY', 'COMPANY_DETAIL', 'ARCHITECTURE', 'VENUE',
-            'PRICE', 'PRICE_DETAIL', 'VENUE_DETAIL',
-            'RESERVATION', 'VENUE_SEARCH', 'RESERVATION_DETAIL',
+            'PRICE', 'PRICE_DETAIL', 'VENUE_DETAIL', 'DETAIL',
+            'RESERVATION', 'COMPANY_RESERVATION', 'VENUE_SEARCH',
+            'RESERVATION_DETAIL',
             'serviceApi', venueCtrl]);
 
 })(window.angular);

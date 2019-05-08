@@ -1,0 +1,63 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <ul class='nav-header'>
+                <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
+                <li ng-show='vm.company_count' class="nav-field"><a ng-href="company">My Company</a></li>
+                <li ng-show='vm.company_count' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-show='vm.my_reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
+                <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
+                        ng-click="vm.SignOut()">Sign
+                        Out</a></li>
+                <li class="nav-field" style="float:right; padding-right: 10px"><a class="btn btn-md btn-success" style='color: white'
+                        data-toggle="modal" data-target="#company">CreateCompany</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <br />
+            <ul class='search-header'>
+                <li class="nav-field col-sm-4">
+                    <form class="form-group" ng-submit='vm.PriceList()'>
+                        <input type='text' class='form-control' ng-model="vm.price_search.search" placeholder="Company name, price name " />
+                    </form>
+
+                </li>
+                <li class="nav-field">
+                    <button class='btn btn-md btn-danger' ng-click="vm.PriceSearchReset()">Reset</button>
+                </li>
+                <li class="nav-field">
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <br />
+            <ul class='info-header'>
+                <li class="nav-field col-xs-2">
+                    <button class='btn btn-primary' ng-disabled="vm.price_list.previous===''" ng-click='vm.PriceList(vm.price_list.previous)'>Previous</button>
+                </li>
+                <li class="nav-field col-xs-2">
+                    &nbsp;
+                    <button class='btn btn-primary' ng-disabled="!vm.price_list.next" ng-click='vm.PriceList(vm.price_list.next)'>Next</button>
+                </li>
+                <li class="nav-field col-sm-4">
+                    <p class="text-center">
+                        Current record:-{{vm.price_list.results.length}}
+                    </p>
+                </li>
+                <li class="nav-field col-sm-6">
+                    <p class="text-right">
+                        Total record found:-{{vm.price_list.count}}
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+
+</div>

@@ -4,7 +4,10 @@
 	"use strict";
 
 	function run($state, $rootScope, $window, $location) {
-		var token_state = ['venue', 'company'];
+		var token_state = [
+			'venue', 'company', 'reservations', 'my-reservation',
+			'prices'
+		];
 		var non_token_state = ['login', 'signup'];
 
 		$rootScope.$on('$stateChangeStart', function (event, next) {

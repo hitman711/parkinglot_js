@@ -1,0 +1,89 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <ul class='nav-header'>
+                <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
+                <li ng-show='vm.company_count' class="nav-field"><a ng-href="company">My Company</a></li>
+                <li ng-show='vm.company_count' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-show='vm.my_reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
+                <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
+                        ng-click="vm.SignOut()">Sign
+                        Out</a></li>
+                <li class="nav-field" style="float:right; padding-right: 10px"><a class="btn btn-md btn-success" style='color: white'
+                        data-toggle="modal" data-target="#company">CreateCompany</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <br />
+            <ul class='search-header'>
+                <li class="nav-field col-sm-4">
+                    <form class="form-group" ng-submit='vm.MyReservationList()'>
+                        <input type='text' class='form-control' ng-model="vm.my_reservation_search.search" placeholder="Parking name.." />
+                    </form>
+
+                </li>
+                <li class="nav-field">
+                    <button class='btn btn-md btn-danger' ng-click="vm.MyReservationSearchReset()">Reset</button>
+                </li>
+                <li class="nav-field">
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <br />
+            <ul class='info-header'>
+                <li class="nav-field col-xs-2">
+                    <button class='btn btn-primary' ng-disabled="vm.my_reservation_list.previous===''" ng-click='vm.MyReservationList(vm.my_reservation_list.previous)'>Previous</button>
+                </li>
+                <li class="nav-field col-xs-2">
+                    &nbsp;
+                    <button class='btn btn-primary' ng-disabled="!vm.my_reservation_list.next" ng-click='vm.MyReservationList(vm.reservation_list.next)'>Next</button>
+                </li>
+                <li class="nav-field col-sm-4">
+                    <p class="text-center">
+                        Current record:-{{vm.my_reservation_list.results.length}}
+                    </p>
+                </li>
+                <li class="nav-field col-sm-6">
+                    <p class="text-right">
+                        Total record found:-{{vm.my_reservation_list.count}}
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <br />
+            <table class="table table-striped">
+                <tr>
+                    <th></th>
+                    <th>Venue Name</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Contact no</th>
+                    <th>Status</th>
+                    <th class="text-center">Action</th>
+                </tr>
+                <tr ng-repeat='reservation in vm.reservation_list'>
+                    <td></td>
+                    <td>{{reservation.venue.name}}</td>
+                    <td>{{reservation.book_from}}</td>
+                    <td>{{reservation.book_to}}</td>
+                    <td>{{reservation.phone_number}}</td>
+                    <td>{{reservation.status}}</td>
+                    <td>
+                        <button ng-if='reservation.payment_status == "pending"' class="btn btn-primary">Pay</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
