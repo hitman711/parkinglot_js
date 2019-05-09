@@ -117,7 +117,7 @@
                     <div class="col-md-12">
                         <br />
                         <select class='form-control' ng-model='vm.add_venue.price'>
-                            <option value="" selected disabled hidden>Select price set</option>
+                            <option value="" selected disabled hidden>Select price Set</option>
                             <option ng-repeat="item in vm.company_price_list" value="{{item.id}}">{{item.name}}</option>
                         </select>
                     </div>
@@ -199,20 +199,24 @@
                 Create Company
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <input class='form-control' type='text' ng-model='vm.company_detail.name' placeholder="Company name" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class='col-md-12 text-center'>
-                        <br />
-                        <button class="btn btn-success" ng-click='vm.CreateCompany()
-                        '>Create
-                            Company</button>
-                    </div>
-                </div>
-            </div>
+                <form class='form-group' ng-submit="vm.CreateCompany()">
+                    <div class="row">
+                            <div class="col-md-12">
+                                <input class='form-control' type='text' ng-model='vm.company_detail.name' placeholder="Company name" />
+                                <small ng-if="vm.field_error" class="form-text text-muted">{{vm.sign_in_error.name}}</small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class='col-md-12 text-center'>
+                                <br />
+                                <button class="btn btn-success" ng-click='vm.CreateCompany()
+                                '>Create
+                                    Company</button>
+                            </div>
+                        </div>
+                    </div>            
+                </form>
+
         </div>
         <!-- /.modal-content -->
     </div>
