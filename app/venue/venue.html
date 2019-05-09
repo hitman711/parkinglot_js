@@ -3,14 +3,14 @@
         <div class="col-md-12">
             <ul class='nav-header'>
                 <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
-                <li ng-show='vm.company_count' class="nav-field"><a ng-href="company">My Company</a></li>
-                <li ng-show='vm.company_count' class="nav-field"><a ng-href="reservations">Reservations</a></li>
-                <li ng-show='vm.my_reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
+                <li ng-show='vm.company_id' class="nav-field"><a ng-href="company">My Venue</a></li>
+                <li ng-show='vm.company_id' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-show='vm.reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
                 <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
                         ng-click="vm.SignOut()">Sign
                         Out</a></li>
-                <li class="nav-field" style="float:right; padding-right: 10px"><a class="btn btn-md btn-success" style='color: white'
-                        data-toggle="modal" data-target="#company">CreateCompany</a></li>
+                <li class="nav-field" style="float:right; padding-right: 10px"><a class="btn btn-md btn-success"
+                        ng-show='vm.company_count==0' style='color: white' data-toggle="modal" data-target="#company">CreateCompany</a></li>
             </ul>
         </div>
     </div>
@@ -19,7 +19,7 @@
             <br />
             <ul class='search-header'>
                 <li class="nav-field col-sm-4">
-                    <form class="form-group" ng-submit="vm.VenueSearch()">
+                    <form class="form-group" ng-submit="vm.Search()">
                         <input type='text' class='form-control' ng-model="vm.venue_search.search" placeholder="Parking no. floor no., building name etc" />
                     </form>
 
@@ -33,11 +33,9 @@
                         <input class="form-control" placeholder="Select a date" ng-model='vm.venue_search.available'
                             ng-model-options="{ updateOn: 'blur' }">
                     </div>
-
-
                 </li>
                 <li class="nav-field">
-                    <button class='btn btn-md btn-danger' ng-click="vm.VenueSearchReset()">Reset</button>
+                    <button class='btn btn-md btn-danger' ng-click="vm.Reset()">Reset</button>
                 </li>
                 <li class="nav-field">
                 </li>
@@ -123,10 +121,13 @@
 
                 <div class='row'>
                     <div class="col-md-6">
-                        <input class="form-control" type="text" ng-model="vm.reservation.license" placeholder="Vehicle license no." />
+                        <input class="form-control" type="text" ng-model="vm.reservation_detail.license" placeholder="Vehicle license no." />
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.license}}</small>
                     </div>
                     <div class="col-md-6">
-                        <input class='form-control' type='text' ng-model='vm.reservation.phone_number' placeholder="Contact no." />
+                        <input class='form-control' type='text' ng-model='vm.reservation_detail.phone_number'
+                            placeholder="Contact no." />
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.phone_number}}</small>
                     </div>
                 </div>
                 <div class="row">
@@ -134,21 +135,24 @@
                 </div>
 
                 <div class='row'>
-                    <div class="input-group col-md-6" moment-picker="vm.reservation.book_from" format="YYYY-MM-DD hh:mm:ss A">
+                    <div class="input-group col-md-6" moment-picker="vm.reservation_detail.book_from" format="YYYY-MM-DD hh:mm:ss A">
                         <span class="input-group-addon">
                             <i class="octicon octicon-clock"></i>
                         </span>
-                        <input class="form-control" required="" placeholder="Select a time" ng-model="vm.reservation.book_from"
-                            ng-model-options="{ updateOn: 'blur' }">
+                        <input class="form-control" required placeholder="Select a time" ng-model="vm.reservation_detail.book_from"
+                            ng-model-options="{ updateOn: 'blur' }" />
+
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.book_from}}</small>
                     </div>
 
 
-                    <div class="input-group col-md-6" moment-picker="vm.reservation.book_to" format="YYYY-MM-DD hh:mm:ss A">
+                    <div class="input-group col-md-6" moment-picker="vm.reservation_detail.book_to" format="YYYY-MM-DD hh:mm:ss A">
                         <span class="input-group-addon">
                             <i class="octicon octicon-clock"></i>
                         </span>
-                        <input class="form-control" required="" placeholder="Select a time" ng-model="vm.reservation.book_to"
-                            ng-model-options="{ updateOn: 'blur' }">
+                        <input class="form-control" required placeholder="Select a time" ng-model="vm.reservation_detail.book_to"
+                            ng-model-options="{ updateOn: 'blur' }" />
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.book_from}}</small>
                     </div>
                 </div>
                 <div class="row">
@@ -156,20 +160,21 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <input class='form-control' type='number' ng-model='vm.reservation.payments[0].amount' />
+                        <input class='form-control' type='number' ng-model='vm.reservation_detail.payments[0].amount' />
                     </div>
                     <div class='col-md-6'>
-                        <select class="form-control" ng-model='vm.reservation.payments[0].payment_type'>
+                        <select class="form-control" ng-model='vm.reservation_detail.payments[0].payment_type'>
                             <option ng-repeat="item in vm.payment_type" value="{{item.key}}">{{item.value}}</option>
                         </select>
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.payment_type}}</small>
                     </div>
                 </div>
                 <div class="row">
                     <div class='col-md-12 text-center'>
                         <br />
                         <button class="btn btn-success" ng-disabled='
-                        vm.reservation.book_to =="" && vm.reservation.book_to =="" && vm.reservation.phone_number=="" && vm.reservation.license  == ""'
-                            ng-click='vm.CreateReservation()'>Booked</button>
+                        !vm.reservation_detail.book_from && !vm.reservation_detail.book_to && !vm.reservation_detail.phone_number && !vm.reservation_detail.license'
+                            ng-click='vm.API_SERVICE_CALL("reservations", "post")'>Booked</button>
                     </div>
                 </div>
             </div>

@@ -3,14 +3,14 @@
         <div class="col-md-12">
             <ul class='nav-header'>
                 <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
-                <li ng-show='vm.company_count' class="nav-field"><a ng-href="company">My Company</a></li>
-                <li ng-show='vm.company_count' class="nav-field"><a ng-href="reservations">Reservations</a></li>
-                <li ng-show='vm.my_reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
+                <li ng-show='vm.company_id' class="nav-field"><a ng-href="company">My Venue</a></li>
+                <li ng-show='vm.company_id' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-show='vm.reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
                 <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
                         ng-click="vm.SignOut()">Sign
                         Out</a></li>
                 <li class="nav-field" style="float:right; padding-right: 10px"><a class="btn btn-md btn-success" style='color: white'
-                        data-toggle="modal" data-target="#company">CreateCompany</a></li>
+                        data-toggle="modal" ng-show='vm.company_count==0' data-target="#company">Create Company</a></li>
             </ul>
         </div>
     </div>
@@ -20,13 +20,13 @@
             <br />
             <ul class='search-header'>
                 <li class="nav-field col-sm-4">
-                    <form class="form-group" ng-submit='vm.CompanyList()'>
-                        <input type='text' class='form-control' ng-model="vm.company_search.search" placeholder="Parking no. floor no., building name etc" />
+                    <form class="form-group" ng-submit='vm.call_initial_function()'>
+                        <input type='text' class='form-control' ng-model="vm.my_venue_search.search" placeholder="Parking no. floor no., building name etc" />
                     </form>
 
                 </li>
                 <li class="nav-field">
-                    <button class='btn btn-md btn-danger' ng-click="vm.CompanySearchReset()">Reset</button>
+                    <button class='btn btn-md btn-danger' ng-click="vm.Reset()">Reset</button>
                 </li>
                 <li class="nav-field">
                 </li>
@@ -39,11 +39,11 @@
             <br />
             <ul class='info-header'>
                 <li class="nav-field col-xs-2">
-                    <button class='btn btn-primary' ng-disabled="vm.venue_list.previous===''" ng-click='vm.VenueList(vm.venue_list.previous)'>Previous</button>
+                    <button class='btn btn-primary' ng-disabled="!vm.venue_list.previous" ng-click='vm.call_initial_function(vm.venue_list.previous)'>Previous</button>
                 </li>
                 <li class="nav-field col-xs-2">
                     &nbsp;
-                    <button class='btn btn-primary' ng-disabled="!vm.venue_list.next" ng-click='vm.VenueList(vm.venue_list.next)'>Next</button>
+                    <button class='btn btn-primary' ng-disabled="!vm.venue_list.next" ng-click='vm.call_initial_function(vm.venue_list.next)'>Next</button>
                 </li>
                 <li class="nav-field col-sm-4">
                     <p class="text-center">
@@ -69,7 +69,7 @@
                     <th>Parking count</th>
                     <th class="text-center">Action</th>
                 </tr>
-                <tr ng-repeat='company in vm.company_list'>
+                <tr ng-repeat='company in vm.my_venue_list.results'>
                     <td ng-click="venueArch(company.id)" data-toggle="modal" data-target="#architectureview">{{company.id}}</td>
                     <td ng-click="venueArch(company.id)" data-toggle="modal" data-target="#architectureview">{{company.name}}</td>
                     <td>{{company.available_lot}}</td>
@@ -201,21 +201,21 @@
             <div class="modal-body">
                 <form class='form-group' ng-submit="vm.CreateCompany()">
                     <div class="row">
-                            <div class="col-md-12">
-                                <input class='form-control' type='text' ng-model='vm.company_detail.name' placeholder="Company name" />
-                                <small ng-if="vm.field_error" class="form-text text-muted">{{vm.sign_in_error.name}}</small>
-                            </div>
+                        <div class="col-md-12">
+                            <input class='form-control' type='text' ng-model='vm.company_detail.name' placeholder="Company name" />
+                            <small ng-if="vm.field_error" class="form-text text-muted">{{vm.sign_in_error.name}}</small>
                         </div>
-                        <div class="row">
-                            <div class='col-md-12 text-center'>
-                                <br />
-                                <button class="btn btn-success" ng-click='vm.CreateCompany()
+                    </div>
+                    <div class="row">
+                        <div class='col-md-12 text-center'>
+                            <br />
+                            <button class="btn btn-success" ng-click='vm.CreateCompany()
                                 '>Create
-                                    Company</button>
-                            </div>
+                                Company</button>
                         </div>
-                    </div>            
-                </form>
+                    </div>
+            </div>
+            </form>
 
         </div>
         <!-- /.modal-content -->

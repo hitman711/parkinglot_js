@@ -54,6 +54,7 @@
 					$window.localStorage.setItem('full_name', '');
 					$window.localStorage.setItem('company_count', response.data.company_count);
 					$window.localStorage.setItem('reservation_count', response.data.reservation_count);
+					$window.localStorage.setItem('company_id', response.data.company_id);
 					$state.transitionTo('venue');
 				},
 					function (response) {

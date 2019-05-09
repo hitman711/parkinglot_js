@@ -21,11 +21,12 @@
 
         vm.venue_search = {
             'search': '',
-            'available': new Date()
+            'available': ''
         }
 
         vm.venue_list = {};
         vm.company_search = {};
+        vm.reservation_search = {};
         vm.company_list = [];
         vm.company_detail = {
             'id': '',
@@ -33,7 +34,12 @@
         }
         vm.venue_detail = {};
         vm.reservation_list = {};
-        vm.reservation_detail = {};
+        vm.reservation_detail = {
+            'payments': []
+        };
+        vm.price_detail = {
+
+        }
 
         vm.reservation = {
             'id': '',
@@ -81,6 +87,10 @@
             "overdue_amount": "",
             "name": ""
         }
+        vm.price_duration = [
+            { 'key': 'day', 'value': 'Day' },
+            { 'key': 'hour', 'value': 'Hour' }
+        ]
         vm.add_venue = {
             "name": "",
             "category": "",
@@ -189,13 +199,37 @@
                     });
         }
 
-        if ($window.localStorage.getItem('company_count') > 0) {
-            vm.CompanyList();
-            vm.company_count = $window.localStorage.getItem('company_count');
+        if ($window.localStorage.getItem('company_id') > 0) {
+            vm.company_id = $window.localStorage.getItem('company_id');
             vm.reservation_count = $window.localStorage.getItem('reservation_count');
         } else {
-            vm.company_count = '';
+            vm.company_id = 0;
 
+        }
+
+        vm.MyVenueList = function (url = '') {
+            if (url) {
+                var url = url;
+            } else {
+                var url = DOMAIN + ARCHITECTURE.replace("{company_id}", vm.company_id);
+                var search = angular.copy(vm.venue_search);
+                if (search['available']) {
+                    search['available'] = new Date(search['available']).getUnixTime();
+                } else {
+                    search['available'] = new Date().getUnixTime();
+                }
+                var query_param = new URLSearchParams(search);
+                if (query_param) {
+                    url = url + "?" + query_param.toString();
+                }
+            }
+            serviceApi.getData(url, {}, true)
+                .then(function (response) {
+                    vm.venue_list = response.data;
+                },
+                    function (response) {
+                        var data = response.data;
+                    });
         }
 
         vm.VenueList = function (url = '') {
@@ -222,7 +256,6 @@
                         var data = response.data;
                     });
         }
-        vm.VenueList();
 
         vm.VenueSearchReset = function () {
             vm.venue_search = {
@@ -340,20 +373,296 @@
                     $window.localStorage.setItem('token', response.data.authentication_code);
                     $window.localStorage.setItem('email', response.data.email);
                     $window.localStorage.setItem('full_name', '');
-                    $window.localStorage.setItem('company_count', response.data.company_count);
-                    vm.company_count = $window.localStorage.getItem('company_count');
+                    $window.localStorage.setItem('company_id', response.data.company_id);
+                    $window.localStorage.setItem('company_id', response.data.company_id);
+                    vm.company_id = $window.localStorage.getItem('company_id');
                     vm.reservation_count = $window.localStorage.getItem('reservation_count');
                 })
         }
-
-        if ($state.current.name == 'reservations') {
-            vm.CompanyReservationList();
-        } else if ($state.current.name == 'my-reservations') {
-            vm.MyReservationList();
+        vm.my_venue_list = {};
+        vm.my_venue_search = {}
+        vm.method_calls = [
+            {
+                'venue': {
+                    'get': {
+                        'url': DOMAIN + VENUE_SEARCH,
+                        'key_replace': {
+                        },
+                        'success_key': 'venue_list',
+                        'search_field': 'venue_search',
+                    }
+                }
+            },
+            {
+                'company': {
+                    'get': {
+                        'url': DOMAIN + ARCHITECTURE,
+                        'search_field': 'my_venue_search',
+                        'key_replace': {
+                            '{company_id}': vm.company_id
+                        },
+                        'success_key': 'my_venue_list',
+                    },
+                    'post': {
+                        'url': DOMAIN + VENUE,
+                        'key_replace': {
+                            '{venue_id}': vm.venue_id
+                        },
+                        'success_key': 'venue_detail',
+                    },
+                    'update': {
+                        'url': DOMAIN + VENUE,
+                        'key_replace': {
+                            '{venue_id}': vm.venue_id
+                        },
+                        'success_key': 'venue_detail',
+                    }
+                }
+            },
+            {
+                'my-reservation': {
+                    'get': {
+                        'url': DOMAIN + RESERVATION,
+                        'search_field': 'my_reservation_search',
+                        'key_replace': {
+                        },
+                        'success_key': 'my_reservation_list',
+                    },
+                    'post': {
+                        'url': DOMAIN + RESERVATION,
+                        'key_replace': {
+                            '{company_id}': vm.company_id
+                        },
+                        'success_key': 'reservation_detail',
+                    },
+                },
+            },
+            {
+                'reservations': {
+                    'get': {
+                        'url': DOMAIN + COMPANY_RESERVATION,
+                        'search_field': 'reservation_search',
+                        'key_replace': {
+                            '{company_id}': vm.company_id
+                        },
+                        'success_key': 'reservation_list',
+                    },
+                    'post': {
+                        'url': DOMAIN + RESERVATION,
+                        'key_replace': {
+                            '{company_id}': vm.company_id
+                        },
+                        'success_key': 'reservation_detail',
+                    },
+                    'update': {
+                        'url': DOMAIN + RESERVATION_DETAIL,
+                        'key_replace': {
+                            '{company_id}': vm.company_id,
+                            '{price_id}': vm.price_detail.id
+                        },
+                        'success_key': 'reservation_detail'
+                    }
+                }
+            },
+            {
+                'price': {
+                    'get': {
+                        'url': DOMAIN + PRICE,
+                        'search_field': 'price_search',
+                        'key_replace': {
+                            '{company_id}': vm.company_id
+                        },
+                        'success_key': 'price_list',
+                    },
+                    'post': {
+                        'url': DOMAIN + PRICE,
+                        'key_replace': {
+                            '{company_id}': vm.company_id
+                        },
+                        'success_key': 'price_detail',
+                    },
+                    'update': {
+                        'url': DOMAIN + PRICE,
+                        'key_replace': {
+                            '{company_id}': vm.company_id,
+                            '{price_id}': vm.price_detail.id
+                        },
+                        'success_key': 'price_detail',
+                    },
+                    'delete': {
+                        'url': DOMAIN + PRICE,
+                        'key_replace': {
+                            '{company_id}': vm.company_id,
+                            '{price_id}': vm.price_detail.id
+                        },
+                        'success_key': 'price_detail'
+                    }
+                }
+            }
+        ]
+        vm.VenueDetail = function (id) {
+            angular.forEach(vm.venue_list.results, function (value, key) {
+                if (value.id == id) {
+                    vm.reservation_detail.venue = id;
+                    vm.venue_detail = value;
+                }
+            })
         }
 
         vm.user_detail();
+        vm.url = '';
+        vm.success = '';
+        vm.date_time_fields = ['book_from', 'book_to', 'available'];
+        vm.field_error = false;
+        vm.key_error = {};
+
+        vm.API_SERVICE_CALL = function (event_name, method, custom_url = '') {
+            vm.url = '';
+            vm.success = '';
+            console.log(event_name, method);
+            angular.forEach(vm.method_calls, function (value, key) {
+                if (value[event_name]) {
+                    vm.url = value[event_name][method]['url'];
+                    vm.success = value[event_name][method]['success_key'];
+                    vm.search_field = value[event_name][method]['search_field'];
+                    angular.forEach(
+                        value[event_name][method]['key_replace'], function (sub_value, field_key) {
+                            vm.url = vm.url.replace(field_key, sub_value);
+                        }, vm);
+                }
+            }, vm);
+            if (method == 'get' && vm[vm.search_field]) {
+                var search = angular.copy(vm[vm.search_field]);
+                angular.forEach(search, function (value, key) {
+                    if (!vm.date_time_fields.indexOf(key)) {
+                        if (value) {
+                            search[key] = new Date(value).getUnixTime();
+                        }
+                    }
+                });
+                var query_param = new URLSearchParams(search);
+                if (query_param) {
+                    vm.url = vm.url + "?" + query_param.toString();
+                }
+            }
+
+            if (custom_url) {
+                vm.url = custom_url;
+            }
+            if (method == 'get') {
+                serviceApi.getData(vm.url, {}, true)
+                    .then(function (response) {
+                        angular.forEach(response.data.results, function (
+                            response_value, resopnse_key) {
+                            console.info(resopnse_key, response_value);
+                            if (response_value['book_from']) {
+                                response_value['book_from'] = vm.getCurrentTime(response_value['book_from']);
+                            }
+                            if (response_value['book_to']) {
+                                response_value['book_to'] = vm.getCurrentTime(response_value['book_to']);
+                            }
+                            response.data.results[resopnse_key] = response_value;
+                        });
+                        vm[vm.success] = response.data;
+
+
+                    }, function (response) {
+                        var data = response.data;
+                        if ("non_field_errors" in data) {
+                            toaster.pop("error", data["non_field_errors"][0]);
+                        } else {
+                            angular.forEach(data, function (value, key) {
+                                vm.field_error = true;
+                                vm.key_error[key] = value[0]
+                            });
+                        }
+                    });
+            } else if (method == 'post') {
+                var search = angular.copy(vm[vm.success]);
+                angular.forEach(search, function (value, key) {
+                    if (vm.date_time_fields.indexOf(key) > -1) {
+                        if (value) {
+                            search[key] = new Date(value).getUnixTime();
+                        }
+                    }
+                });
+                serviceApi.postData(vm.url, search, true)
+                    .then(function (response) {
+                        vm[vm.success] = response.data;
+                        toaster.pop("success", "Record created successfully");
+                    }, function (response) {
+                        console.log(response.data);
+                        if ("non_field_errors" in response.data) {
+                            toaster.pop("error", data["non_field_errors"][0]);
+                        } else {
+                            angular.forEach(response.data, function (erro_value, error_key) {
+                                console.log(erro_value, error_key);
+                                vm.field_error = true;
+                                vm.key_error[error_key] = erro_value[0];
+                            });
+                        }
+                    });
+            } else if (method == 'update') {
+                serviceApi.getData(vm.url, {}, true)
+                    .then(function (response) {
+                        vm[vm.success] = response.data;
+                    }, function (response) {
+                        var data = response.data;
+                        if ("non_field_errors" in data) {
+                            toaster.pop("error", data["non_field_errors"][0]);
+                        } else {
+                            angular.forEach(data, function (value, key) {
+                                vm.field_error = true;
+                                vm.key_error[key] = value[0]
+                            });
+                        }
+                    });
+            } else if (method == 'delete') {
+                serviceApi.deleteData(vm.url, true)
+                    .then(function (response) {
+                        vm[vm.success] = response.data;
+                        vm.call_initial_function();
+                    }, function (response) {
+                        var data = response.data;
+                        if ("non_field_errors" in data) {
+                            toaster.pop("error", data["non_field_errors"][0]);
+                        } else {
+                            angular.forEach(data, function (value, key) {
+                                vm.field_error = true;
+                                vm.key_error[key] = value[0]
+                            });
+                        }
+                    });
+            }
+        }
+        vm.call_initial_function = function (url = '') {
+
+            if ($state.current.name == 'reservations') {
+                vm.method_calls;
+                vm.API_SERVICE_CALL($state.current.name, 'get', url);
+            } else if ($state.current.name == 'my-reservation') {
+                vm.method_calls;
+                vm.API_SERVICE_CALL($state.current.name, 'get', url);
+            } else if ($state.current.name == 'company') {
+                vm.method_calls;
+                vm.API_SERVICE_CALL($state.current.name, 'get', url);
+            } else if ($state.current.name == 'venue') {
+                vm.method_calls;
+                vm.API_SERVICE_CALL($state.current.name, 'get', url);
+            }
+        }
+        vm.call_initial_function();
+
+        vm.Search = function () {
+            vm.call_initial_function();
+        }
+        vm.Reset = function () {
+
+        }
+
     }
+
+
 
 
     angular.module('parkinglot').controller(

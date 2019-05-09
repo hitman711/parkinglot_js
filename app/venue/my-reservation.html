@@ -3,14 +3,14 @@
         <div class="col-md-12">
             <ul class='nav-header'>
                 <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
-                <li ng-show='vm.company_count' class="nav-field"><a ng-href="company">My Company</a></li>
-                <li ng-show='vm.company_count' class="nav-field"><a ng-href="reservations">Reservations</a></li>
-                <li ng-show='vm.my_reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
+                <li ng-show='vm.company_id' class="nav-field"><a ng-href="company">My Venue</a></li>
+                <li ng-show='vm.company_id' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-show='vm.reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
                 <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
                         ng-click="vm.SignOut()">Sign
                         Out</a></li>
-                <li class="nav-field" style="float:right; padding-right: 10px"><a class="btn btn-md btn-success" style='color: white'
-                        data-toggle="modal" data-target="#company">CreateCompany</a></li>
+                <li class="nav-field" ng-show='vm.company_count==0' style="float:right; padding-right: 10px"><a class="btn btn-md btn-success"
+                        style='color: white' data-toggle="modal" data-target="#company">CreateCompany</a></li>
             </ul>
         </div>
     </div>
@@ -19,13 +19,33 @@
             <br />
             <ul class='search-header'>
                 <li class="nav-field col-sm-4">
-                    <form class="form-group" ng-submit='vm.MyReservationList()'>
+                    <form class="form-group" ng-submit='vm.Search()'>
                         <input type='text' class='form-control' ng-model="vm.my_reservation_search.search" placeholder="Parking name.." />
                     </form>
-
                 </li>
+                <li class="nav-field col-sm-2">
+                    <div class="input-group" moment-picker="vm.my_reservation_search.book_from" format="YYYY-MM-DD hh:mm:ss A">
+                        <span class="input-group-addon">
+                            <i class="octicon octicon-calendar"></i>
+                        </span>
+                        <input class="form-control" placeholder="Select a date" ng-model='vm.my_reservation_search.book_from'
+                            ng-model-options="{ updateOn: 'blur' }">
+                    </div>
+                </li>
+
+                <li class="nav-field col-sm-2">
+                    <div class="input-group" moment-picker="vm.my_reservation_search.book_to" format="YYYY-MM-DD hh:mm:ss A"
+                        change='vm.Search()'>
+                        <span class="input-group-addon">
+                            <i class="octicon octicon-calendar"></i>
+                        </span>
+                        <input class="form-control" placeholder="Select a date" ng-model='vm.my_reservation_search.book_to'
+                            ng-model-options="{ updateOn: 'blur' }">
+                    </div>
+                </li>
+
                 <li class="nav-field">
-                    <button class='btn btn-md btn-danger' ng-click="vm.MyReservationSearchReset()">Reset</button>
+                    <button class='btn btn-md btn-danger' ng-click="vm.Reset('my-reservation')">Reset</button>
                 </li>
                 <li class="nav-field">
                 </li>
@@ -71,7 +91,7 @@
                     <th>Status</th>
                     <th class="text-center">Action</th>
                 </tr>
-                <tr ng-repeat='reservation in vm.reservation_list'>
+                <tr ng-repeat='reservation in vm.my_reservation_list.results'>
                     <td></td>
                     <td>{{reservation.venue.name}}</td>
                     <td>{{reservation.book_from}}</td>
