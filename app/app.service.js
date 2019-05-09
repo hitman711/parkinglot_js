@@ -67,7 +67,7 @@ deleteData
 				}
 			}
 			return $http({
-				method: 'PUT',
+				method: 'PATCH',
 				url: url,
 				data: data,
 				headers: headers

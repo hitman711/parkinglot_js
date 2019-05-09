@@ -45,7 +45,7 @@
                 </li>
 
                 <li class="nav-field">
-                    <button class='btn btn-md btn-danger' ng-click="vm.Reset('my-reservation')">Reset</button>
+                    <button class='btn btn-md btn-danger' ng-click="vm.Reset()">Reset</button>
                 </li>
                 <li class="nav-field">
                 </li>
@@ -94,12 +94,12 @@
                 <tr ng-repeat='reservation in vm.my_reservation_list.results'>
                     <td></td>
                     <td>{{reservation.venue.name}}</td>
-                    <td>{{reservation.book_from}}</td>
-                    <td>{{reservation.book_to}}</td>
+                    <td>{{reservation.book_from | date:'yyyy-MM-dd HH:mm a'}}</td>
+                    <td>{{reservation.book_to | date:'yyyy-MM-dd HH:mm a'}}</td>
                     <td>{{reservation.phone_number}}</td>
                     <td>{{reservation.status}}</td>
                     <td>
-                        <button ng-if='reservation.payment_status == "pending"' class="btn btn-primary">Pay</button>
+                        <button ng-hide="reservation.payment_status === 'closed' || reservation.status === 'canceled'" class="btn btn-primary">Pay</button>
                     </td>
                 </tr>
             </table>

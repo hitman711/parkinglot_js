@@ -29,7 +29,7 @@
                         <span class="input-group-addon">
                             <i class="octicon octicon-calendar"></i>
                         </span>
-                        <input class="form-control" placeholder="Select a date" ng-change='vm.Search()' ng-model='vm.reservation_search.book_from'
+                        <input class="form-control" placeholder="Select a date" ng-model='vm.reservation_search.book_from'
                             ng-model-options="{ updateOn: 'blur' }">
                     </div>
                 </li>
@@ -52,6 +52,8 @@
                 </li>
 
                 <li class="nav-field">
+                    <button class='
+                        btn btn-md btn-success' ng-click="vm.Search()">Search</button>
                     <button class='
                         btn btn-md btn-danger' ng-click="vm.Reset()">Reset</button>
                 </li>
@@ -96,18 +98,27 @@
                     <th>From</th>
                     <th>To</th>
                     <th>Contact no</th>
+                    <th>Status</th>
+                    <th>Payment Status</th> 
                     <th class="text-center">Action</th>
                 </tr>
                 <tr ng-repeat='reservation in vm.reservation_list.results'>
                     <td></td>
                     <td>{{reservation.venue.name}}</td>
-                    <td>{{reservation.book_from}}</td>
-                    <td>{{reservation.book_to}}</td>
+                    <td>{{reservation.book_from  | date:'yyyy-MM-dd HH:mm a'}}</td>
+                    <td>{{reservation.book_to | date:'yyyy-MM-dd HH:mm a'}}</td>
                     <td>{{reservation.phone_number}}</td>
                     <td>
-                        <select class="form-control" ng-change="vm.API_SERVICE_CALL('reservations', 'update')">
-                            <option ng-repeat="item in vm.reservation_status_type" value="{{item.key}}" ng-show='reservation.status != item.key'>{{item.value}}</option>
-                        </select>
+                        {{reservation.status}}
+                    </td>
+                    <td>
+                        {{reservation.payment_status}}
+                    </td>
+                    <td>
+                        <button class="btn btn-success" 
+                        data-title="reservation_update" data-toggle="modal" 
+                        data-target="#reservation_update"
+                        ng-click="vm.ReservationDetail(reservation.id)">Update</button>
                     </td>
                 </tr>
             </table>
@@ -115,3 +126,39 @@
     </div>
 </div>
 </div>
+
+<div class="modal fade" id="reservation_update" tabindex="-1" role="dialog" aria-labelledby="reservation_update" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Update Reservation
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <br/>
+                            <select class="form-control" ng-model='vm.reservation_detail.status'>
+                                    <option hidden>Update parking status</option>
+                                <option 
+                                    ng-repeat="item in vm.reservation_status_type" 
+                                    value="{{item.key}}" 
+                                    >{{item.value}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class='col-md-12 text-center'>
+                            <br />
+                            <button class="btn btn-success" 
+                            ng-click='vm.API_SERVICE_CALL("reservations", "update")'>Update Reservation</button>
+                        </div>
+                    </div>
+    
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->

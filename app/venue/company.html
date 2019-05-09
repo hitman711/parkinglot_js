@@ -28,7 +28,13 @@
                 <li class="nav-field">
                     <button class='btn btn-md btn-danger' ng-click="vm.Reset()">Reset</button>
                 </li>
-                <li class="nav-field">
+                <li class="nav-field col-sm-6 text-right">
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#addvenue" ng-click="vm.FetchPrice(company.id)">
+                            Add Venue
+                        </button>
+                        <button class="btn btn-info" data-toggle="modal" data-target="#addprice">
+                                Add Price
+                            </button> 
                 </li>
             </ul>
         </div>
@@ -47,12 +53,12 @@
                 </li>
                 <li class="nav-field col-sm-4">
                     <p class="text-center">
-                        Current record:-{{vm.venue_list.results.length}}
+                        Current record:-{{vm.my_venue_list.results.length}}
                     </p>
                 </li>
                 <li class="nav-field col-sm-4">
                     <p class="text-right">
-                        Total record found:-{{vm.venue_list.count}}
+                        Total record found:-{{vm.my_venue_list.count}}
                     </p>
                 </li>
             </ul>
@@ -67,23 +73,11 @@
                     <th></th>
                     <th>Name</th>
                     <th>Parking count</th>
-                    <th class="text-center">Action</th>
                 </tr>
                 <tr ng-repeat='company in vm.my_venue_list.results'>
                     <td ng-click="venueArch(company.id)" data-toggle="modal" data-target="#architectureview">{{company.id}}</td>
                     <td ng-click="venueArch(company.id)" data-toggle="modal" data-target="#architectureview">{{company.name}}</td>
                     <td>{{company.available_lot}}</td>
-                    <td class="text-center">
-                        <button class="btn btn-primary" data-toggle="modal" data-target="#addvenue" ng-click="vm.FetchPrice(company.id)">
-                            Add Venue
-                        </button>
-                        <button class="btn btn-info" data-toggle="modal" data-target="#addprice">
-                            Add Price
-                        </button>
-                        <button class="btn btn-success" data-toggle="modal" data-target="#booking">
-                            Booking
-                        </button>
-                    </td>
                 </tr>
             </table>
         </div>
@@ -147,40 +141,46 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <input class='form-control' type='text' ng-model='vm.add_price.name' placeholder="Price name" />
+                        <input class='form-control' type='text' ng-model='vm.price_detail.name' placeholder="Price name" />
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.name}}</small>
                     </div>
                 </div>
                 <div class="row">
 
                     <div class="col-md-6">
                         <br />
-                        <input class='form-control' type='text' ng-model='vm.add_price.duration' placeholder="Set booking duration" />
+                        <input class='form-control' type='text' ng-model='vm.price_detail.duration' placeholder="Set booking duration" />
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.duration}}</small>
                     </div>
                     <div class="col-md-6">
                         <br />
-                        <select class='form-control' ng-model='vm.add_price.duration_unit' placeholder="Set booking duration unit">
+                        <select class='form-control' ng-model='vm.price_detail.duration_unit' placeholder="Set booking duration unit">
                             <option ng-repeat="item in vm.duration_unit" value="{{item.key}}">{{item.key}}</option>
                         </select>
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.duration_unit}}</small>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
                         <br />
-                        <input type='text' ng-model='vm.add_price.pre_paid_amount' placeholder="Pre paid amount" class="form-control" />
+                        <input type='text' ng-model='vm.price_detail.pre_paid_amount' placeholder="Pre paid amount" class="form-control" />
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.pre_paid_amount}}</small>
                     </div>
                     <div class="col-md-4">
                         <br />
-                        <input type='text' ng-model='vm.add_price.amount' placeholder="Total amount" class="form-control" />
+                        <input type='text' ng-model='vm.price_detail.amount' placeholder="Total amount" class="form-control" />
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.amount}}</small>
                     </div>
                     <div class="col-md-4">
                         <br />
-                        <input type='text' ng-model='vm.add_price.overdue_amount' placeholder="Overdue amount" class="form-control" />
+                        <input type='text' ng-model='vm.price_detail.overdue_amount' placeholder="Overdue amount" class="form-control" />
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.overdue_amount}}</small>
                     </div>
                 </div>
                 <div class="row">
                     <div class='col-md-12 text-center'>
                         <br />
-                        <button class="btn btn-success">Create Price</button>
+                        <button class="btn btn-success" ng-click="vm.API_SERVICE_CALL('price', 'post')">Create Price</button>
                     </div>
                 </div>
             </div>

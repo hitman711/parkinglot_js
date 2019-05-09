@@ -37,9 +37,8 @@
         vm.reservation_detail = {
             'payments': []
         };
-        vm.price_detail = {
-
-        }
+        vm.reservation_id = '';
+        vm.price_detail = {}
 
         vm.reservation = {
             'id': '',
@@ -66,6 +65,12 @@
             { 'key': 'cash', 'value': 'Cash' },
             { 'key': 'free', 'value': 'Free' },
             { 'key': 'card', 'value': 'Card' }
+        ]
+
+        vm.payment_status = [
+            { 'key': 'pending', 'value': 'Pending' },
+            { 'key': 'partial paid', 'value': 'Partial Paid' },
+            { 'key': 'full paid', 'value': 'Full Paid' }
         ]
 
         vm.duration_unit = [
@@ -325,19 +330,6 @@
                 })
         }
 
-        vm.ReservationDetail = function (reservation_id) {
-            serviceApi.getData(DOMAIN + RESERVATION_DETAIL, {}, true)
-                .then(function (response) {
-                    vm.reservation_detail = response.data;
-                });
-        }
-
-        vm.UpdateReservation = function (reservation_id, status) {
-            serviceApi.patchData(DOMAIN + RESERVATION_DETAIL.replace('{reservation_id}', reservation_id), { 'status': status }, true)
-                .then(function (response) {
-                    vm.reservation_detail = response.data;
-                });
-        }
 
         vm.MyReservationList = function () {
             serviceApi.getData(DOMAIN + RESERVATION, {}, true)
@@ -346,26 +338,6 @@
                 })
         }
 
-        vm.CompanyReservationList = function () {
-            var url = DOMAIN + COMPANY_RESERVATION;
-            if (vm.reservation_search) {
-                var search = angular.copy(vm.reservation_search);
-                if (search['from']) {
-                    search['from'] = new Date(search['from']).getUnixTime();
-                }
-                if (search['to']) {
-                    search['to'] = new Date(search['to']).getUnixTime();
-                }
-                var query_param = new URLSearchParams(search);
-                if (query_param) {
-                    url = url + "?" + query_param.toString();
-                }
-            }
-            serviceApi.getData(DOMAIN + COMPANY_RESERVATION, {}, true)
-                .then(function (response) {
-                    vm.reservation_list = response.data;
-                })
-        }
 
         vm.user_detail = function () {
             serviceApi.getData(DOMAIN + DETAIL, {}, true)
@@ -381,6 +353,26 @@
         }
         vm.my_venue_list = {};
         vm.my_venue_search = {}
+
+        vm.VenueDetail = function (id) {
+            angular.forEach(vm.venue_list.results, function (value, key) {
+                if (value.id == id) {
+                    vm.reservation_detail.venue = id;
+                    vm.venue_detail = value;
+                }
+            })
+        }
+
+        vm.ReservationDetail = function(id){
+            angular.forEach(vm.reservation_list.results, function (value, key) {
+                if (value.id == id) {
+                    vm.reservation_detail = value;
+                    vm.reservation_id = value.id;
+                    vm.reservation_detail.venue = value.id;
+                }
+            });
+        }
+
         vm.method_calls = [
             {
                 'venue': {
@@ -399,21 +391,21 @@
                         'url': DOMAIN + ARCHITECTURE,
                         'search_field': 'my_venue_search',
                         'key_replace': {
-                            '{company_id}': vm.company_id
+                            '{company_id}': 'company_id'
                         },
                         'success_key': 'my_venue_list',
                     },
                     'post': {
                         'url': DOMAIN + VENUE,
                         'key_replace': {
-                            '{venue_id}': vm.venue_id
+                            '{venue_id}': 'venue_id'
                         },
                         'success_key': 'venue_detail',
                     },
                     'update': {
                         'url': DOMAIN + VENUE,
                         'key_replace': {
-                            '{venue_id}': vm.venue_id
+                            '{venue_id}': 'venue_id'
                         },
                         'success_key': 'venue_detail',
                     }
@@ -431,7 +423,6 @@
                     'post': {
                         'url': DOMAIN + RESERVATION,
                         'key_replace': {
-                            '{company_id}': vm.company_id
                         },
                         'success_key': 'reservation_detail',
                     },
@@ -443,22 +434,19 @@
                         'url': DOMAIN + COMPANY_RESERVATION,
                         'search_field': 'reservation_search',
                         'key_replace': {
-                            '{company_id}': vm.company_id
                         },
                         'success_key': 'reservation_list',
                     },
                     'post': {
                         'url': DOMAIN + RESERVATION,
                         'key_replace': {
-                            '{company_id}': vm.company_id
                         },
                         'success_key': 'reservation_detail',
                     },
                     'update': {
                         'url': DOMAIN + RESERVATION_DETAIL,
                         'key_replace': {
-                            '{company_id}': vm.company_id,
-                            '{price_id}': vm.price_detail.id
+                            '{reservation_id}': 'reservation_id'
                         },
                         'success_key': 'reservation_detail'
                     }
@@ -470,14 +458,14 @@
                         'url': DOMAIN + PRICE,
                         'search_field': 'price_search',
                         'key_replace': {
-                            '{company_id}': vm.company_id
+                            '{company_id}': 'company_id'
                         },
                         'success_key': 'price_list',
                     },
                     'post': {
                         'url': DOMAIN + PRICE,
                         'key_replace': {
-                            '{company_id}': vm.company_id
+                            '{company_id}': 'company_id'
                         },
                         'success_key': 'price_detail',
                     },
@@ -492,22 +480,14 @@
                     'delete': {
                         'url': DOMAIN + PRICE,
                         'key_replace': {
-                            '{company_id}': vm.company_id,
-                            '{price_id}': vm.price_detail.id
+                            '{company_id}': 'company_id',
+                            '{price_id}': 'price_id'
                         },
                         'success_key': 'price_detail'
                     }
                 }
             }
         ]
-        vm.VenueDetail = function (id) {
-            angular.forEach(vm.venue_list.results, function (value, key) {
-                if (value.id == id) {
-                    vm.reservation_detail.venue = id;
-                    vm.venue_detail = value;
-                }
-            })
-        }
 
         vm.user_detail();
         vm.url = '';
@@ -519,7 +499,6 @@
         vm.API_SERVICE_CALL = function (event_name, method, custom_url = '') {
             vm.url = '';
             vm.success = '';
-            console.log(event_name, method);
             angular.forEach(vm.method_calls, function (value, key) {
                 if (value[event_name]) {
                     vm.url = value[event_name][method]['url'];
@@ -527,10 +506,11 @@
                     vm.search_field = value[event_name][method]['search_field'];
                     angular.forEach(
                         value[event_name][method]['key_replace'], function (sub_value, field_key) {
-                            vm.url = vm.url.replace(field_key, sub_value);
+                            vm.url = vm.url.replace(field_key, vm[sub_value]);
                         }, vm);
                 }
             }, vm);
+            console.info(vm.url);
             if (method == 'get' && vm[vm.search_field]) {
                 var search = angular.copy(vm[vm.search_field]);
                 angular.forEach(search, function (value, key) {
@@ -554,7 +534,6 @@
                     .then(function (response) {
                         angular.forEach(response.data.results, function (
                             response_value, resopnse_key) {
-                            console.info(resopnse_key, response_value);
                             if (response_value['book_from']) {
                                 response_value['book_from'] = vm.getCurrentTime(response_value['book_from']);
                             }
@@ -588,10 +567,15 @@
                 });
                 serviceApi.postData(vm.url, search, true)
                     .then(function (response) {
+                        if (response.data['book_from']) {
+                            response.data['book_from'] = vm.getCurrentTime(response.data['book_from']);
+                        }
+                        if (response.data['book_to']) {
+                            response.data['book_to'] = vm.getCurrentTime(response.data['book_to']);
+                        }
                         vm[vm.success] = response.data;
                         toaster.pop("success", "Record created successfully");
                     }, function (response) {
-                        console.log(response.data);
                         if ("non_field_errors" in response.data) {
                             toaster.pop("error", data["non_field_errors"][0]);
                         } else {
@@ -603,8 +587,22 @@
                         }
                     });
             } else if (method == 'update') {
-                serviceApi.getData(vm.url, {}, true)
+                var search = angular.copy(vm[vm.success]);
+                angular.forEach(search, function (value, key) {
+                    if (vm.date_time_fields.indexOf(key) > -1) {
+                        if (value) {
+                            search[key] = new Date(value).getUnixTime();
+                        }
+                    }
+                });
+                serviceApi.patchData(vm.url, search, true)
                     .then(function (response) {
+                        if (response.data['book_from']) {
+                            response.data['book_from'] = vm.getCurrentTime(response.data['book_from']);
+                        }
+                        if (response.data['book_to']) {
+                            response.data['book_to'] = vm.getCurrentTime(response.data['book_to']);
+                        }
                         vm[vm.success] = response.data;
                     }, function (response) {
                         var data = response.data;
@@ -656,10 +654,10 @@
         vm.Search = function () {
             vm.call_initial_function();
         }
+
         vm.Reset = function () {
 
         }
-
     }
 
 
