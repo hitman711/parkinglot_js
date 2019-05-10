@@ -23,6 +23,8 @@ Install global requirement like nodejs, npm and grunt-cli
 
     sudo apt-get install grunt
 
+    npm install -g grunt-cli
+
 Redirect to project folder from shell/terminal. Install dependancies
 
 .. code-block:: sh
