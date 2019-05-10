@@ -67,6 +67,11 @@
             { 'key': 'card', 'value': 'Card' }
         ]
 
+        vm.venue_type = [
+            {'key': 'public', 'value': 'Publicaly available for booking'},
+            {'key': 'private', 'value': 'Private parking'}
+        ]
+
         vm.payment_status = [
             { 'key': 'pending', 'value': 'Pending' },
             { 'key': 'partial paid', 'value': 'Partial Paid' },
@@ -169,7 +174,7 @@
                     $window.localStorage.setItem('email', response.data.email);
                     $window.localStorage.setItem('full_name', '');
                     $window.localStorage.setItem('company_id', response.data.company_id);
-                    $window.localStorage.setItem('company_id', response.data.company_id);
+                    $window.localStorage.setItem('reservation_count', response.data.reservation_count);
                     vm.company_id = $window.localStorage.getItem('company_id');
                     vm.reservation_count = $window.localStorage.getItem('reservation_count');
                 })

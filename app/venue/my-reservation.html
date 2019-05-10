@@ -3,10 +3,10 @@
         <div class="col-md-12">
             <ul class='nav-header'>
                 <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
-                <li ng-show='vm.company_id' class="nav-field"><a ng-href="company">My Venue</a></li>
-                <li ng-show='vm.company_id' class="nav-field"><a ng-href="reservations">Reservations</a></li>
-                <li ng-show='vm.company_id' class="nav-field"><a ng-href="prices">Prices</a></li>
-                <li ng-show='vm.reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
+                <li ng-hide='vm.company_id==0' class="nav-field"><a ng-href="company">My Venue</a></li>
+                <li ng-hide='vm.company_id==0' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-hide='vm.company_id==0' class="nav-field"><a ng-href="prices">Prices</a></li>
+                <li ng-hide='vm.reservation_count==0' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
                 <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
                         ng-click="vm.SignOut()">Sign
                         Out</a></li>

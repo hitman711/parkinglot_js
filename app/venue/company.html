@@ -3,10 +3,10 @@
         <div class="col-md-12">
             <ul class='nav-header'>
                 <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
-                <li ng-show='vm.company_id' class="nav-field"><a ng-href="company">My Venue</a></li>
-                <li ng-show='vm.company_id' class="nav-field"><a ng-href="reservations">Reservations</a></li>
-                <li ng-show='vm.company_id' class="nav-field"><a ng-href="prices">Prices</a></li>
-                <li ng-show='vm.reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
+                <li ng-hide='vm.company_id==0' class="nav-field"><a ng-href="company">My Venue</a></li>
+                <li ng-hide='vm.company_id==0' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-hide='vm.company_id==0' class="nav-field"><a ng-href="prices">Prices</a></li>
+                <li ng-hide='vm.reservation_count==0' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
                 <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
                         ng-click="vm.SignOut()">Sign
                         Out</a></li>
@@ -74,12 +74,14 @@
                     <th></th>
                     <th>Name</th>
                     <th>Parking count</th>
+                    <th>Venue Type</th>
                     <th>Action</th>
                 </tr>
                 <tr ng-repeat='company in vm.my_venue_list.results'>
                     <td ng-click="venueArch(company.id)" data-toggle="modal" data-target="#architectureview">{{company.id}}</td>
                     <td ng-click="venueArch(company.id)" data-toggle="modal" data-target="#architectureview">{{company.name}}</td>
                     <td>{{company.available_lot}}</td>
+                    <td>{{company.venue_type}}</td>
                     <td>
                         <button class="btn btn-primary" data-toggle="modal" data-target="#addvenue" ng-click="vm.AddVenueDetail(company.id)">
                             Add Venue
@@ -123,6 +125,15 @@
                         <select class='form-control' ng-model='vm.venue_detail.price'>
                             <option value="" selected disabled hidden>Select price Set</option>
                             <option ng-repeat="item in vm.price_list.results" value="{{item.id}}">{{item.name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <br />
+                        <select class='form-control' ng-model='vm.venue_detail.venue_type'>
+                            <option value="" selected disabled hidden>Available parking type</option>
+                            <option ng-repeat="item in vm.venue_type" value="{{item.key}}">{{item.value}}</option>
                         </select>
                     </div>
                 </div>
