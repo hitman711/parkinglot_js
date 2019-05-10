@@ -5,12 +5,13 @@
                 <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
                 <li ng-show='vm.company_id' class="nav-field"><a ng-href="company">My Venue</a></li>
                 <li ng-show='vm.company_id' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-show='vm.company_id' class="nav-field"><a ng-href="prices">Prices</a></li>
                 <li ng-show='vm.reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
                 <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
                         ng-click="vm.SignOut()">Sign
                         Out</a></li>
                 <li class="nav-field" style="float:right; padding-right: 10px"><a class="btn btn-md btn-success" style='color: white'
-                        data-toggle="modal" ng-show='vm.company_count==0' data-target="#company">Create Company</a></li>
+                        data-toggle="modal" ng-show='vm.company_id==0' data-target="#company">Create Company</a></li>
             </ul>
         </div>
     </div>
@@ -29,12 +30,12 @@
                     <button class='btn btn-md btn-danger' ng-click="vm.Reset()">Reset</button>
                 </li>
                 <li class="nav-field col-sm-6 text-right">
-                        <button class="btn btn-primary" data-toggle="modal" data-target="#addvenue" ng-click="vm.FetchPrice(company.id)">
-                            Add Venue
-                        </button>
-                        <button class="btn btn-info" data-toggle="modal" data-target="#addprice">
-                                Add Price
-                            </button> 
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#addvenue" ng-click="vm.AddVenueDetail(company.id)">
+                        Add Venue
+                    </button>
+                    <button class="btn btn-info" data-toggle="modal" data-target="#addprice">
+                        Add Price
+                    </button>
                 </li>
             </ul>
         </div>
@@ -73,11 +74,20 @@
                     <th></th>
                     <th>Name</th>
                     <th>Parking count</th>
+                    <th>Action</th>
                 </tr>
                 <tr ng-repeat='company in vm.my_venue_list.results'>
                     <td ng-click="venueArch(company.id)" data-toggle="modal" data-target="#architectureview">{{company.id}}</td>
                     <td ng-click="venueArch(company.id)" data-toggle="modal" data-target="#architectureview">{{company.name}}</td>
                     <td>{{company.available_lot}}</td>
+                    <td>
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#addvenue" ng-click="vm.AddVenueDetail(company.id)">
+                            Add Venue
+                        </button>
+                        <button class="btn btn-success" data-toggle="modal" data-target="#addvenue" ng-click="vm.UpdateVenueDetail(company.id)">
+                            Update Venue
+                        </button>
+                    </td>
                 </tr>
             </table>
         </div>
@@ -94,14 +104,14 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <input class='form-control' type='text' ng-model='vm.add_venue.name' placeholder="Venue name*"
+                        <input class='form-control' type='text' ng-model='vm.venue_detail.name' placeholder="Venue name*"
                             required />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <br />
-                        <select class='form-control' ng-model='vm.add_venue.category'>
+                        <select class='form-control' ng-model='vm.venue_detail.category'>
                             <option value="" selected disabled hidden required>Select category*</option>
                             <option ng-repeat="item in vm.venue_category" value="{{item.key}}">{{item.value}}</option>
                         </select>
@@ -110,16 +120,21 @@
                 <div class="row">
                     <div class="col-md-12">
                         <br />
-                        <select class='form-control' ng-model='vm.add_venue.price'>
+                        <select class='form-control' ng-model='vm.venue_detail.price'>
                             <option value="" selected disabled hidden>Select price Set</option>
-                            <option ng-repeat="item in vm.company_price_list" value="{{item.id}}">{{item.name}}</option>
+                            <option ng-repeat="item in vm.price_list.results" value="{{item.id}}">{{item.name}}</option>
                         </select>
                     </div>
                 </div>
                 <div class="row">
                     <div class='col-md-12 text-center'>
                         <br />
-                        <button class="btn btn-success" ng-click='vm.CreateVenue()'>Create Venue</button>
+                        <button class="btn btn-success" ng-hide="vm.venue_id || vm.venue_detail.id" ng-click='vm.API_SERVICE_CALL("company", "post")'>Create
+                            Venue</button>
+                        <button class="btn btn-success" ng-show="vm.venue_id && !vm.venue_detail.id" ng-click='vm.API_SERVICE_CALL("venue", "post")'>Sub
+                            Venue</button>
+                        <button class="btn btn-info" ng-show="vm.venue_id && vm.venue_detail.id" ng-click='vm.API_SERVICE_CALL("venue", "update")'>Update
+                            Venue</button>
                     </div>
                 </div>
 
@@ -163,7 +178,8 @@
                 <div class="row">
                     <div class="col-md-4">
                         <br />
-                        <input type='text' ng-model='vm.price_detail.pre_paid_amount' placeholder="Pre paid amount" class="form-control" />
+                        <input type='text' ng-model='vm.price_detail.pre_paid_amount' placeholder="Pre paid amount"
+                            class="form-control" />
                         <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.pre_paid_amount}}</small>
                     </div>
                     <div class="col-md-4">
@@ -180,7 +196,7 @@
                 <div class="row">
                     <div class='col-md-12 text-center'>
                         <br />
-                        <button class="btn btn-success" ng-click="vm.API_SERVICE_CALL('price', 'post')">Create Price</button>
+                        <button class="btn btn-success" ng-click="vm.API_SERVICE_CALL('prices', 'post')">Create Price</button>
                     </div>
                 </div>
             </div>

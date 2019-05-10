@@ -5,12 +5,14 @@
                 <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
                 <li ng-show='vm.company_id' class="nav-field"><a ng-href="company">My Venue</a></li>
                 <li ng-show='vm.company_id' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-show='vm.company_id' class="nav-field"><a ng-href="prices">Prices</a></li>
                 <li ng-show='vm.reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
                 <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
                         ng-click="vm.SignOut()">Sign
                         Out</a></li>
                 <li class="nav-field" style="float:right; padding-right: 10px"><a class="btn btn-md btn-success"
-                        ng-show='vm.company_count==0' style='color: white' data-toggle="modal" data-target="#company">CreateCompany</a></li>
+                        ng-show='vm.company_id==0' style='color: white' data-toggle="modal" data-target="#company">Create
+                        Company</a></li>
             </ul>
         </div>
     </div>

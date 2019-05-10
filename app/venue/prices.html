@@ -5,12 +5,13 @@
                 <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
                 <li ng-show='vm.company_id' class="nav-field"><a ng-href="company">My Venue</a></li>
                 <li ng-show='vm.company_id' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-show='vm.company_id' class="nav-field"><a ng-href="prices">Prices</a></li>
                 <li ng-show='vm.reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
                 <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
                         ng-click="vm.SignOut()">Sign
                         Out</a></li>
                 <li class="nav-field" style="float:right; padding-right: 10px"><a class="btn btn-md btn-success" style='color: white'
-                        data-toggle="modal" data-target="#company">Create Company</a></li>
+                        data-toggle="modal" ng-show='vm.company_count==0' data-target="#company">Create Company</a></li>
             </ul>
         </div>
     </div>
@@ -19,7 +20,7 @@
             <br />
             <ul class='search-header'>
                 <li class="nav-field col-sm-4">
-                    <form class="form-group" ng-submit='vm.PriceList()'>
+                    <form class="form-group" ng-submit='vm.Search()'>
                         <input type='text' class='form-control' ng-model="vm.price_search.search" placeholder="Company name, price name " />
                     </form>
 
@@ -27,8 +28,10 @@
                 <li class="nav-field">
                     <button class='btn btn-md btn-danger' ng-click="vm.Reset()">Reset</button>
                 </li>
-                <li class="nav-field">
-                    <button class='btn btn-md btn-success'>Create price</button>
+                <li class="nav-field col-sm-6 text-right">
+                    <button class="btn btn-info" data-toggle="modal" data-target="#addprice">
+                        Add Price
+                    </button>
                 </li>
             </ul>
         </div>
@@ -57,76 +60,100 @@
                 </li>
             </ul>
         </div>
+    </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <br />
-                <table class="table table-striped">
-                    <tr>
-                        <th></th>
-                        <th>Venue Name</th>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Contact no</th>
-                        <th>Status</th>
-                        <th class="text-center">Action</th>
-                    </tr>
-                    <tr ng-repeat='price in vm.price_list.results'>
-                        <td></td>
-                        <td>{{price.name}}</td>
-                        <td>{{price.duration}}</td>
-                        <td>{{price.duration_unit}}</td>
-                        <td>{{price.over_due_charge}}</td>
-                        <td>
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#price-update">
-                                update
-                            </button>
-                            <button class="btn btn-danger">
-                                delete
-                            </button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+    <div class="row">
+        <div class="col-md-12">
+            <br />
+            <table class="table table-striped">
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Duration</th>
+                    <th>Duration Type</th>
+                    <th>Amount</th>
+                    <th>Pre paid amount</th>
+                    <th>Over due charge</th>
+                    <th class="text-center">Action</th>
+                </tr>
+                <tr ng-repeat='price in vm.price_list.results'>
+                    <td></td>
+                    <td>{{price.name}}</td>
+                    <td>{{price.duration}}</td>
+                    <td>{{price.duration_unit}}</td>
+                    <td>{{price.amount}}</td>
+                    <td>{{price.pre_paid_amount}}</td>
+                    <td>{{price.overdue_amount}}</td>
+                    <td>
+                        <button class="btn btn-primary" data-toggle="modal" ng-click='vm.PriceDetail(price.id)'
+                            data-target="#addprice">
+                            update
+                        </button>
+                        <button class="btn btn-danger" data-toggle="modal" ng-click='vm.PriceDetail(price.id)'
+                            data-target="#deleteprice">
+                            delete
+                        </button>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>
+</div>
 
-<div class="modal fade" id="price-update" tabindex="-1" role="dialog" aria-labelledby="price-update" aria-hidden="true">
+<div class="modal fade" id="addprice" tabindex="-1" role="dialog" aria-labelledby="addprice" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                Update Price (All prices are in euro)
+                Add Price
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
                         <input class='form-control' type='text' ng-model='vm.price_detail.name' placeholder="Price name" />
-                        <small ng-if="vm.key_error" class="form-text text-muted">{{vm.key_error.name}}</small>
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.name}}</small>
                     </div>
                 </div>
                 <div class="row">
+
                     <div class="col-md-6">
-                        <input class='form-control' type='text' ng-model='vm.price_detail.duration' placeholder="Set duration" />
-                        <small ng-if="vm.key_error" class="form-text text-muted">{{vm.key_error.duration}}</small>
+                        <br />
+                        <input class='form-control' type='text' ng-model='vm.price_detail.duration' placeholder="Set booking duration" />
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.duration}}</small>
                     </div>
                     <div class="col-md-6">
-                        <select ng-model='vm.price_detail.duration_unit'>
-                            <option hidden>Select parking duration</option>
-                            <option ng-repeat="item in vm.price_duration" value="{{item.key}}">{{item.value}}</option>
+                        <br />
+                        <select class='form-control' ng-model='vm.price_detail.duration_unit' placeholder="Set booking duration unit">
+                            <option ng-repeat="item in vm.duration_unit" value="{{item.key}}">{{item.key}}</option>
                         </select>
-                        <small ng-if="vm.key_error" class="form-text text-muted">{{vm.key_error.duration_unit}}</small>
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.duration_unit}}</small>
                     </div>
                 </div>
                 <div class="row">
-                    <input class='form-control' type='text' ng-model='vm.price_detail.over_due_amount' placeholder="Over due charges" />
-                    <small ng-if="vm.key_error" class="form-text text-muted">{{vm.key_error.over_due_amount}}</small>
+                    <div class="col-md-4">
+                        <br />
+                        <input type='text' ng-model='vm.price_detail.pre_paid_amount' placeholder="Pre paid amount"
+                            class="form-control" />
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.pre_paid_amount}}</small>
+                    </div>
+                    <div class="col-md-4">
+                        <br />
+                        <input type='text' ng-model='vm.price_detail.amount' placeholder="Total amount" class="form-control" />
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.amount}}</small>
+                    </div>
+                    <div class="col-md-4">
+                        <br />
+                        <input type='text' ng-model='vm.price_detail.overdue_amount' placeholder="Overdue amount" class="form-control" />
+                        <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.overdue_amount}}</small>
+                    </div>
                 </div>
                 <div class="row">
                     <div class='col-md-12 text-center'>
                         <br />
-                        <button class="btn btn-success" ng-show='vm.price_detail.id' ng-click="vm.API_SERVICE_CALL('price', 'update')">Update</button>
-                        <button class="btn btn-success" ng-show='!vm.price_detail.id' ng-click="vm.API_SERVICE_CALL('price', 'update')">Create</button>
+                        <button class="btn btn-success" ng-show="vm.price_detail.id" ng-click="vm.API_SERVICE_CALL('prices', 'update')">Update
+                            Price</button>
+                        <button class="btn btn-success" ng-hide="vm.price_detail.id" ng-click="vm.API_SERVICE_CALL('prices', 'post')">Create
+                            Price</button>
                     </div>
                 </div>
             </div>
@@ -136,3 +163,33 @@
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade" id="deleteprice" tabindex="-1" role="dialog" aria-labelledby="deleteprice" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                Add Price
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>Are you sure you want to delete?</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class='col-md-12 text-center'>
+                        <br />
+                        <button class="btn btn-success" ng-show="vm.price_detail.id" ng-click="vm.API_SERVICE_CALL('prices', 'delete')">Yes</button>
+                        <button class="btn btn-danger" ng-show="vm.price_detail.id" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

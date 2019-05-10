@@ -5,12 +5,13 @@
                 <li class="nav-field"><a class="active" ng-href='venue'>Parking List</a></li>
                 <li ng-show='vm.company_id' class="nav-field"><a ng-href="company">My Venue</a></li>
                 <li ng-show='vm.company_id' class="nav-field"><a ng-href="reservations">Reservations</a></li>
+                <li ng-show='vm.company_id' class="nav-field"><a ng-href="prices">Prices</a></li>
                 <li ng-show='vm.reservation_count' class="nav-field"><a ng-href="my-reservation">My Reservations</a></li>
                 <li class="nav-field" style="float:right"><a class="active btn btn-md btn-danger" style='color: white'
                         ng-click="vm.SignOut()">Sign
                         Out</a></li>
-                <li class="nav-field" ng-show='vm.company_count==0' style="float:right; padding-right: 10px"><a class="btn btn-md btn-success"
-                        style='color: white' data-toggle="modal" data-target="#company">CreateCompany</a></li>
+                <li class="nav-field" ng-show='vm.company_id==0' style="float:right; padding-right: 10px"><a class="btn btn-md btn-success"
+                        style='color: white' data-toggle="modal" data-target="#company">Create Company</a></li>
             </ul>
         </div>
     </div>
@@ -46,8 +47,7 @@
                 <li class="nav-field col-sm-2">
                     <select class="form-control" ng-model="vm.reservation_search.status" ng-change='vm.Search()'>
                         <option hidden>Select reservation status</option>
-                        <option ng-select="item in vm.reservation_status" value='
-                        {{item.key}}'>{{item.value}}</option>
+                        <option ng-repeat="item in vm.reservation_status_type" value='{{item.key}}'>{{item.value}}</option>
                     </select>
                 </li>
 
@@ -99,13 +99,13 @@
                     <th>To</th>
                     <th>Contact no</th>
                     <th>Status</th>
-                    <th>Payment Status</th> 
+                    <th>Payment Status</th>
                     <th class="text-center">Action</th>
                 </tr>
                 <tr ng-repeat='reservation in vm.reservation_list.results'>
                     <td></td>
                     <td>{{reservation.venue.name}}</td>
-                    <td>{{reservation.book_from  | date:'yyyy-MM-dd HH:mm a'}}</td>
+                    <td>{{reservation.book_from | date:'yyyy-MM-dd HH:mm a'}}</td>
                     <td>{{reservation.book_to | date:'yyyy-MM-dd HH:mm a'}}</td>
                     <td>{{reservation.phone_number}}</td>
                     <td>
@@ -115,10 +115,8 @@
                         {{reservation.payment_status}}
                     </td>
                     <td>
-                        <button class="btn btn-success" 
-                        data-title="reservation_update" data-toggle="modal" 
-                        data-target="#reservation_update"
-                        ng-click="vm.ReservationDetail(reservation.id)">Update</button>
+                        <button class="btn btn-success" data-title="reservation_update" data-toggle="modal" data-target="#reservation_update"
+                            ng-click="vm.ReservationDetail(reservation.id)">Update</button>
                     </td>
                 </tr>
             </table>
@@ -127,38 +125,36 @@
 </div>
 </div>
 
-<div class="modal fade" id="reservation_update" tabindex="-1" role="dialog" aria-labelledby="reservation_update" aria-hidden="true">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    Update Reservation
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <br/>
-                            <select class="form-control" ng-model='vm.reservation_detail.status'>
-                                    <option hidden>Update parking status</option>
-                                <option 
-                                    ng-repeat="item in vm.reservation_status_type" 
-                                    value="{{item.key}}" 
-                                    >{{item.value}}</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class='col-md-12 text-center'>
-                            <br />
-                            <button class="btn btn-success" 
-                            ng-click='vm.API_SERVICE_CALL("reservations", "update")'>Update Reservation</button>
-                        </div>
-                    </div>
-    
-                </div>
-                <div class="modal-footer">
-                </div>
+<div class="modal fade" id="reservation_update" tabindex="-1" role="dialog" aria-labelledby="reservation_update"
+    aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                Update Reservation
             </div>
-            <!-- /.modal-content -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <br />
+                        <select class="form-control" ng-model='vm.reservation_detail.status'>
+                            <option hidden>Update parking status</option>
+                            <option ng-repeat="item in vm.reservation_status_type" value="{{item.key}}">{{item.value}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class='col-md-12 text-center'>
+                        <br />
+                        <button class="btn btn-success" ng-click='vm.API_SERVICE_CALL("reservations", "update")'>Update
+                            Reservation</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+            </div>
         </div>
-        <!-- /.modal-dialog -->
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->

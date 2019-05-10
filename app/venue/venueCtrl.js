@@ -21,7 +21,7 @@
 
         vm.venue_search = {
             'search': '',
-            'available': ''
+            'available': new Date()
         }
 
         vm.venue_list = {};
@@ -114,75 +114,6 @@
             $state.transitionTo('login');
         }
 
-        vm.FetchCompany = function (id) {
-            serviceApi.getData(
-                DOMAIN + COMPANY_DETAIL.replace('{company_id}', id),
-                {}, true)
-                .then(function (response) {
-                    vm.company_detail = response.data;
-                },
-                    function (response) {
-                        // Erro handler
-                        var data = response.data;
-                        if ("non_field_errors" in data) {
-                            toaster.pop("error", data["non_field_errors"][0]);
-                        } else {
-                            angular.forEach(data, function (value, key) {
-                                vm.field_error = true;
-                                vm.sign_up_error[key] = value[0]
-                            });
-                        }
-                    });
-        }
-
-        vm.FetchPrice = function (company_id) {
-            serviceApi.getData(
-                DOMAIN + PRICE.replace('{company_id}',
-                    company_id), {}, true)
-                .then(function (response) {
-                    vm.company_price_list = response.data['results'];
-                });
-            vm.FetchCompany(company_id);
-        }
-
-        vm.CreateVenue = function () {
-
-            serviceApi.postData(
-                DOMAIN + ARCHITECTURE.replace(
-                    '{company_id}', vm.company_detail.id
-                ), vm.add_venue, true)
-                .then(
-                    function (response) {
-                        vm.venue_detail = response.data;
-                    },
-                    function (response) {
-                        if ("non_field_errors" in data) {
-                            toaster.pop("error", data["non_field_errors"][0]);
-                        } else {
-                            angular.forEach(data, function (value, key) {
-                                vm.field_error = true;
-                                vm.sign_up_error[key] = value[0]
-                            });
-                        }
-                    }
-                )
-        }
-
-        vm.CompanyList = function () {
-            var search = angular.copy(vm.company_search);
-            var url = DOMAIN + COMPANY;
-            if (search) {
-                var query_param = new URLSearchParams(search);
-                if (query_param) {
-                    url = url + "?" + query_param.toString();
-                }
-            }
-            serviceApi.getData(url, {}, true)
-                .then(function (response) {
-                    vm.company_list = response.data['results'];
-                });
-        }
-
         vm.CreateCompany = function () {
             serviceApi.postData(DOMAIN + COMPANY, vm.company_detail, true)
                 .then(
@@ -191,8 +122,11 @@
                         vm.user_detail();
                         vm.company_list.push(response.data);
                         toaster.pop("success", "Company create successfully");
+                        $('.modal').modal('hide');
+
                     },
                     function (response) {
+                        data = response.data;
                         if ("non_field_errors" in data) {
                             toaster.pop("error", data["non_field_errors"][0]);
                         } else {
@@ -212,132 +146,21 @@
 
         }
 
-        vm.MyVenueList = function (url = '') {
-            if (url) {
-                var url = url;
-            } else {
-                var url = DOMAIN + ARCHITECTURE.replace("{company_id}", vm.company_id);
-                var search = angular.copy(vm.venue_search);
-                if (search['available']) {
-                    search['available'] = new Date(search['available']).getUnixTime();
-                } else {
-                    search['available'] = new Date().getUnixTime();
+        vm.AddVenueDetail = function (id) {
+            vm.venue_id = id;
+            vm.venue_detail = {};
+            vm.API_SERVICE_CALL('prices', 'get');
+        }
+
+        vm.UpdateVenueDetail = function (id) {
+            vm.venue_id = id;
+            angular.forEach(vm.my_venue_list.results, function (value, key) {
+                if (value.id == id) {
+                    vm.venue_detail = value;
                 }
-                var query_param = new URLSearchParams(search);
-                if (query_param) {
-                    url = url + "?" + query_param.toString();
-                }
-            }
-            serviceApi.getData(url, {}, true)
-                .then(function (response) {
-                    vm.venue_list = response.data;
-                },
-                    function (response) {
-                        var data = response.data;
-                    });
+            });
+            vm.API_SERVICE_CALL('prices', 'get');
         }
-
-        vm.VenueList = function (url = '') {
-            if (url) {
-                var url = url;
-            } else {
-                var url = DOMAIN + VENUE_SEARCH;
-                var search = angular.copy(vm.venue_search);
-                if (search['available']) {
-                    search['available'] = new Date(search['available']).getUnixTime();
-                } else {
-                    search['available'] = new Date().getUnixTime();
-                }
-                var query_param = new URLSearchParams(search);
-                if (query_param) {
-                    url = url + "?" + query_param.toString();
-                }
-            }
-            serviceApi.getData(url, {}, true)
-                .then(function (response) {
-                    vm.venue_list = response.data;
-                },
-                    function (response) {
-                        var data = response.data;
-                    });
-        }
-
-        vm.VenueSearchReset = function () {
-            vm.venue_search = {
-                'search': '',
-                'available': new Date()
-            }
-            vm.VenueList();
-        }
-        vm.CompanySearchReset = function () {
-            vm.company_search = {};
-            vm.CompanyList();
-        }
-
-        vm.VenueSearch = function () {
-            vm.VenueList();
-        }
-
-        vm.VenueDetail = function (id) {
-            var url = DOMAIN + VENUE_DETAIL.replace('{venue_id}', id);
-            serviceApi.getData(url, {}, true)
-                .then(function (response) {
-                    vm.venue_detail = response.data;
-                    vm.reservation.venue = vm.venue_detail.id;
-                });
-        }
-
-        vm.PriceList = function (company_id) {
-            var price_list = PRICE.replace(
-                '{company_id}', company_id.toString());
-            serviceApi.getData(DOMAIN + price_list, {}, true)
-                .then(function (response) {
-                    vm.price_list = response.data;
-                }, function (response) {
-                    var data = response.data;
-                });
-        }
-
-        vm.PriceDetail = function (company_id, price_id) {
-            var price_detail = PRICE_DETAIL.replace(
-                '{company_id}', company_id.toString());
-            price_detail = price_detail.replace(
-                '{price_id}', price_id.toString());
-            serviceApi.getData(DOMAIN + PRICE_DETAIL, {}, true)
-                .then(function (response) {
-                    vm.price_detail = response.data;
-                }, function (response) {
-                    var data = response.data;
-                })
-        }
-
-        vm.CreateReservation = function () {
-            var reservation = angular.copy(vm.reservation);
-            reservation.book_from = new Date(reservation.book_from).getUnixTime();
-            reservation.book_to = new Date(reservation.book_to).getUnixTime();
-            serviceApi.postData(DOMAIN + RESERVATION, reservation, true)
-                .then(function (response) {
-                    vm.reservation_detail = response.data;
-                }, function (response) {
-                    if ("non_field_errors" in data) {
-                        toaster.pop("error", data["non_field_errors"][0]);
-                    } else {
-                        angular.forEach(data, function (value, key) {
-                            vm.field_error = true;
-                            vm.sign_up_error[key] = value[0]
-                        });
-                    }
-                })
-        }
-
-
-        vm.MyReservationList = function () {
-            serviceApi.getData(DOMAIN + RESERVATION, {}, true)
-                .then(function (response) {
-                    vm.reservation_list = response.data;
-                })
-        }
-
 
         vm.user_detail = function () {
             serviceApi.getData(DOMAIN + DETAIL, {}, true)
@@ -352,7 +175,8 @@
                 })
         }
         vm.my_venue_list = {};
-        vm.my_venue_search = {}
+        vm.my_venue_search = {};
+        vm.price_id = '';
 
         vm.VenueDetail = function (id) {
             angular.forEach(vm.venue_list.results, function (value, key) {
@@ -363,7 +187,7 @@
             })
         }
 
-        vm.ReservationDetail = function(id){
+        vm.ReservationDetail = function (id) {
             angular.forEach(vm.reservation_list.results, function (value, key) {
                 if (value.id == id) {
                     vm.reservation_detail = value;
@@ -372,6 +196,16 @@
                 }
             });
         }
+
+        vm.PriceDetail = function (id) {
+            angular.forEach(vm.price_list.results, function (value, key) {
+                if (value.id == id) {
+                    vm.price_detail = value;
+                    vm.price_id = value.id;
+                }
+            }, vm);
+        }
+
 
         vm.method_calls = [
             {
@@ -382,6 +216,20 @@
                         },
                         'success_key': 'venue_list',
                         'search_field': 'venue_search',
+                    },
+                    'post': {
+                        'url': DOMAIN + VENUE,
+                        'key_replace': {
+                            '{venue_id}': 'venue_id'
+                        },
+                        'success_key': 'venue_detail',
+                    },
+                    'update': {
+                        'url': DOMAIN + VENUE_DETAIL,
+                        'key_replace': {
+                            '{venue_id}': 'venue_id'
+                        },
+                        'success_key': 'venue_detail',
                     }
                 }
             },
@@ -396,16 +244,9 @@
                         'success_key': 'my_venue_list',
                     },
                     'post': {
-                        'url': DOMAIN + VENUE,
+                        'url': DOMAIN + ARCHITECTURE,
                         'key_replace': {
-                            '{venue_id}': 'venue_id'
-                        },
-                        'success_key': 'venue_detail',
-                    },
-                    'update': {
-                        'url': DOMAIN + VENUE,
-                        'key_replace': {
-                            '{venue_id}': 'venue_id'
+                            '{company_id}': 'company_id'
                         },
                         'success_key': 'venue_detail',
                     }
@@ -453,7 +294,7 @@
                 }
             },
             {
-                'price': {
+                'prices': {
                     'get': {
                         'url': DOMAIN + PRICE,
                         'search_field': 'price_search',
@@ -470,15 +311,15 @@
                         'success_key': 'price_detail',
                     },
                     'update': {
-                        'url': DOMAIN + PRICE,
+                        'url': DOMAIN + PRICE_DETAIL,
                         'key_replace': {
-                            '{company_id}': vm.company_id,
-                            '{price_id}': vm.price_detail.id
+                            '{company_id}': 'company_id',
+                            '{price_id}': 'price_id'
                         },
                         'success_key': 'price_detail',
                     },
                     'delete': {
-                        'url': DOMAIN + PRICE,
+                        'url': DOMAIN + PRICE_DETAIL,
                         'key_replace': {
                             '{company_id}': 'company_id',
                             '{price_id}': 'price_id'
@@ -514,7 +355,7 @@
             if (method == 'get' && vm[vm.search_field]) {
                 var search = angular.copy(vm[vm.search_field]);
                 angular.forEach(search, function (value, key) {
-                    if (!vm.date_time_fields.indexOf(key)) {
+                    if (vm.date_time_fields.indexOf(key) > -1) {
                         if (value) {
                             search[key] = new Date(value).getUnixTime();
                         }
@@ -575,12 +416,13 @@
                         }
                         vm[vm.success] = response.data;
                         toaster.pop("success", "Record created successfully");
+                        $('.modal').modal('hide');
+                        vm.call_initial_function();
                     }, function (response) {
                         if ("non_field_errors" in response.data) {
-                            toaster.pop("error", data["non_field_errors"][0]);
+                            toaster.pop("error", response.data["non_field_errors"][0]);
                         } else {
                             angular.forEach(response.data, function (erro_value, error_key) {
-                                console.log(erro_value, error_key);
                                 vm.field_error = true;
                                 vm.key_error[error_key] = erro_value[0];
                             });
@@ -604,6 +446,9 @@
                             response.data['book_to'] = vm.getCurrentTime(response.data['book_to']);
                         }
                         vm[vm.success] = response.data;
+                        vm.call_initial_function();
+                        $('.modal').modal('hide');
+                        toaster.pop("success", "Record updated successfully");
                     }, function (response) {
                         var data = response.data;
                         if ("non_field_errors" in data) {
@@ -618,10 +463,11 @@
             } else if (method == 'delete') {
                 serviceApi.deleteData(vm.url, true)
                     .then(function (response) {
-                        vm[vm.success] = response.data;
+                        toaster.pop("success", "Record deleted successfully");
                         vm.call_initial_function();
                     }, function (response) {
                         var data = response.data;
+                        $('.modal').modal('hide');
                         if ("non_field_errors" in data) {
                             toaster.pop("error", data["non_field_errors"][0]);
                         } else {
@@ -647,8 +493,12 @@
             } else if ($state.current.name == 'venue') {
                 vm.method_calls;
                 vm.API_SERVICE_CALL($state.current.name, 'get', url);
+            } else if ($state.current.name == 'prices') {
+                vm.method_calls;
+                vm.API_SERVICE_CALL($state.current.name, 'get', url);
             }
         }
+
         vm.call_initial_function();
 
         vm.Search = function () {
@@ -656,7 +506,7 @@
         }
 
         vm.Reset = function () {
-
+            vm.call_initial_function();
         }
     }
 
