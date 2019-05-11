@@ -6,7 +6,7 @@ Constant list of parameter which used to perform operation in project
     "use strict";
 
     angular.module('parkinglot')
-        .constant('DOMAIN', 'http://127.0.0.1:8000/v1/')
+        .constant('DOMAIN', 'http://52.15.231.54/v1/')
         .constant('SIGNIN', 'login')
         .constant('REGISTRATION', 'register')
         .constant('DETAIL', 'detail')
