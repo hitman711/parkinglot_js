@@ -188,6 +188,11 @@
                 if (value.id == id) {
                     vm.reservation_detail.venue = id;
                     vm.venue_detail = value;
+                    console.info();
+                    if (vm.venue_detail.price){
+                        vm.reservation_detail.payments[0].amount = parseInt(
+                            vm.venue_detail.price.pre_paid_amount);
+                    }
                 }
             })
         }

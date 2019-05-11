@@ -375,7 +375,7 @@ angular.module('parkinglot').run(['$templateCache', function($templateCache) {
     "            <br />\n" +
     "            <ul class='info-header'>\n" +
     "                <li class=\"nav-field col-xs-2\">\n" +
-    "                    <button class='btn btn-primary' ng-disabled=\"vm.my_reservation_list.previous===''\" ng-click='vm.MyReservationList(vm.my_reservation_list.previous)'>Previous</button>\n" +
+    "                    <button class='btn btn-primary' ng-disabled=\"!vm.my_reservation_list.previous\" ng-click='vm.MyReservationList(vm.my_reservation_list.previous)'>Previous</button>\n" +
     "                </li>\n" +
     "                <li class=\"nav-field col-xs-2\">\n" +
     "                    &nbsp;\n" +
@@ -473,7 +473,7 @@ angular.module('parkinglot').run(['$templateCache', function($templateCache) {
     "            <br />\n" +
     "            <ul class='info-header'>\n" +
     "                <li class=\"nav-field col-xs-2\">\n" +
-    "                    <button class='btn btn-primary' ng-disabled=\"vm.price_list.previous===''\" ng-click='vm.PriceList(vm.price_list.previous)'>Previous</button>\n" +
+    "                    <button class='btn btn-primary' ng-disabled=\"!vm.price_list.previous\" ng-click='vm.PriceList(vm.price_list.previous)'>Previous</button>\n" +
     "                </li>\n" +
     "                <li class=\"nav-field col-xs-2\">\n" +
     "                    &nbsp;\n" +
@@ -698,11 +698,14 @@ angular.module('parkinglot').run(['$templateCache', function($templateCache) {
     "            <br />\n" +
     "            <ul class='info-header'>\n" +
     "                <li class=\"nav-field col-xs-2\">\n" +
-    "                    <button class='btn btn-primary' ng-disabled=\"vm.reservation_list.previous===''\" ng-click='vm.ReservationList(vm.reservation_list.previous)'>Previous</button>\n" +
+    "                    <button class='btn btn-primary'\n" +
+    "                    ng-disabled=\"!vm.reservation_list.previous\" \n" +
+    "                    ng-click='vm.API_SERVICE_CALL(\"reservations\", \"get\",vm.reservation_list.previous)'>Previous</button>\n" +
     "                </li>\n" +
     "                <li class=\"nav-field col-xs-2\">\n" +
     "                    &nbsp;\n" +
-    "                    <button class='btn btn-primary' ng-disabled=\"!vm.reservation_list.next\" ng-click='vm.ReservationList(vm.reservation_list.next)'>Next</button>\n" +
+    "                    <button class='btn btn-primary' ng-disabled=\"!vm.reservation_list.next\" \n" +
+    "                    ng-click='vm.API_SERVICE_CALL(\"reservations\", \"get\",vm.reservation_list.next)'>Next</button>\n" +
     "                </li>\n" +
     "                <li class=\"nav-field col-sm-4\">\n" +
     "                    <p class=\"text-center\">\n" +
@@ -844,11 +847,13 @@ angular.module('parkinglot').run(['$templateCache', function($templateCache) {
     "            <br />\n" +
     "            <ul class='info-header'>\n" +
     "                <li class=\"nav-field col-xs-2\">\n" +
-    "                    <button class='btn btn-primary' ng-disabled=\"vm.venue_list.previous===''\" ng-click='vm.VenueList(vm.venue_list.previous)'>Previous</button>\n" +
+    "                    <button class='btn btn-primary' ng-disabled=\"!vm.venue_list.previous\" \n" +
+    "                    ng-click='vm.API_SERVICE_CALL(\"venue\", \"get\", vm.venue_list.previous)'>Previous</button>\n" +
     "                </li>\n" +
     "                <li class=\"nav-field col-xs-2\">\n" +
     "                    &nbsp;\n" +
-    "                    <button class='btn btn-primary' ng-disabled=\"!vm.venue_list.next\" ng-click='vm.VenueList(vm.venue_list.next)'>Next</button>\n" +
+    "                    <button class='btn btn-primary' ng-disabled=\"!vm.venue_list.next\" \n" +
+    "                    ng-click='vm.API_SERVICE_CALL(\"venue\", \"get\", vm.venue_list.next)'>Next</button>\n" +
     "                </li>\n" +
     "                <li class=\"nav-field col-sm-4\">\n" +
     "                    <p class=\"text-center\">\n" +
@@ -937,7 +942,7 @@ angular.module('parkinglot').run(['$templateCache', function($templateCache) {
     "                        <span class=\"input-group-addon\">\n" +
     "                            <i class=\"octicon octicon-clock\"></i>\n" +
     "                        </span>\n" +
-    "                        <input class=\"form-control\" required placeholder=\"Select a time\" ng-model=\"vm.reservation_detail.book_from\"\n" +
+    "                        <input class=\"form-control\" required placeholder=\"Start time\" ng-model=\"vm.reservation_detail.book_from\"\n" +
     "                            ng-model-options=\"{ updateOn: 'blur' }\" />\n" +
     "\n" +
     "                        <small ng-if=\"vm.field_error\" class=\"form-text text-muted\">{{vm.key_error.book_from}}</small>\n" +
@@ -948,7 +953,7 @@ angular.module('parkinglot').run(['$templateCache', function($templateCache) {
     "                        <span class=\"input-group-addon\">\n" +
     "                            <i class=\"octicon octicon-clock\"></i>\n" +
     "                        </span>\n" +
-    "                        <input class=\"form-control\" required placeholder=\"Select a time\" ng-model=\"vm.reservation_detail.book_to\"\n" +
+    "                        <input class=\"form-control\" required placeholder=\"End time\" ng-model=\"vm.reservation_detail.book_to\"\n" +
     "                            ng-model-options=\"{ updateOn: 'blur' }\" />\n" +
     "                        <small ng-if=\"vm.field_error\" class=\"form-text text-muted\">{{vm.key_error.book_from}}</small>\n" +
     "                    </div>\n" +
@@ -958,10 +963,14 @@ angular.module('parkinglot').run(['$templateCache', function($templateCache) {
     "                </div>\n" +
     "                <div class=\"row\">\n" +
     "                    <div class=\"col-md-6\">\n" +
-    "                        <input class='form-control' type='number' ng-model='vm.reservation_detail.payments[0].amount' />\n" +
+    "                        <input class='form-control' \n" +
+    "                        type='number' \n" +
+    "                        ng-model='vm.reservation_detail.payments[0].amount' \n" +
+    "                        placeholder=\"Pre paid amount\"/>\n" +
     "                    </div>\n" +
     "                    <div class='col-md-6'>\n" +
     "                        <select class=\"form-control\" ng-model='vm.reservation_detail.payments[0].payment_type'>\n" +
+    "                                <option value=\"\" selected disabled hidden required>Select payment type</option>\n" +
     "                            <option ng-repeat=\"item in vm.payment_type\" value=\"{{item.key}}\">{{item.value}}</option>\n" +
     "                        </select>\n" +
     "                        <small ng-if=\"vm.field_error\" class=\"form-text text-muted\">{{vm.key_error.payment_type}}</small>\n" +

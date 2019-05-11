@@ -68,11 +68,14 @@
             <br />
             <ul class='info-header'>
                 <li class="nav-field col-xs-2">
-                    <button class='btn btn-primary' ng-disabled="vm.reservation_list.previous===''" ng-click='vm.ReservationList(vm.reservation_list.previous)'>Previous</button>
+                    <button class='btn btn-primary'
+                    ng-disabled="!vm.reservation_list.previous" 
+                    ng-click='vm.API_SERVICE_CALL("reservations", "get",vm.reservation_list.previous)'>Previous</button>
                 </li>
                 <li class="nav-field col-xs-2">
                     &nbsp;
-                    <button class='btn btn-primary' ng-disabled="!vm.reservation_list.next" ng-click='vm.ReservationList(vm.reservation_list.next)'>Next</button>
+                    <button class='btn btn-primary' ng-disabled="!vm.reservation_list.next" 
+                    ng-click='vm.API_SERVICE_CALL("reservations", "get",vm.reservation_list.next)'>Next</button>
                 </li>
                 <li class="nav-field col-sm-4">
                     <p class="text-center">

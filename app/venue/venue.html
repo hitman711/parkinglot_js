@@ -50,11 +50,13 @@
             <br />
             <ul class='info-header'>
                 <li class="nav-field col-xs-2">
-                    <button class='btn btn-primary' ng-disabled="vm.venue_list.previous===''" ng-click='vm.VenueList(vm.venue_list.previous)'>Previous</button>
+                    <button class='btn btn-primary' ng-disabled="!vm.venue_list.previous" 
+                    ng-click='vm.API_SERVICE_CALL("venue", "get", vm.venue_list.previous)'>Previous</button>
                 </li>
                 <li class="nav-field col-xs-2">
                     &nbsp;
-                    <button class='btn btn-primary' ng-disabled="!vm.venue_list.next" ng-click='vm.VenueList(vm.venue_list.next)'>Next</button>
+                    <button class='btn btn-primary' ng-disabled="!vm.venue_list.next" 
+                    ng-click='vm.API_SERVICE_CALL("venue", "get", vm.venue_list.next)'>Next</button>
                 </li>
                 <li class="nav-field col-sm-4">
                     <p class="text-center">
@@ -143,7 +145,7 @@
                         <span class="input-group-addon">
                             <i class="octicon octicon-clock"></i>
                         </span>
-                        <input class="form-control" required placeholder="Select a time" ng-model="vm.reservation_detail.book_from"
+                        <input class="form-control" required placeholder="Start time" ng-model="vm.reservation_detail.book_from"
                             ng-model-options="{ updateOn: 'blur' }" />
 
                         <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.book_from}}</small>
@@ -154,7 +156,7 @@
                         <span class="input-group-addon">
                             <i class="octicon octicon-clock"></i>
                         </span>
-                        <input class="form-control" required placeholder="Select a time" ng-model="vm.reservation_detail.book_to"
+                        <input class="form-control" required placeholder="End time" ng-model="vm.reservation_detail.book_to"
                             ng-model-options="{ updateOn: 'blur' }" />
                         <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.book_from}}</small>
                     </div>
@@ -164,10 +166,14 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <input class='form-control' type='number' ng-model='vm.reservation_detail.payments[0].amount' />
+                        <input class='form-control' 
+                        type='number' 
+                        ng-model='vm.reservation_detail.payments[0].amount' 
+                        placeholder="Pre paid amount"/>
                     </div>
                     <div class='col-md-6'>
                         <select class="form-control" ng-model='vm.reservation_detail.payments[0].payment_type'>
+                                <option value="" selected disabled hidden required>Select payment type</option>
                             <option ng-repeat="item in vm.payment_type" value="{{item.key}}">{{item.value}}</option>
                         </select>
                         <small ng-if="vm.field_error" class="form-text text-muted">{{vm.key_error.payment_type}}</small>
