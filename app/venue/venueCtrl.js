@@ -342,7 +342,7 @@
         vm.field_error = false;
         vm.key_error = {};
 
-        vm.API_SERVICE_CALL = function (event_name, method, custom_url = '') {
+        vm.API_SERVICE_CALL = function(event_name, method, custom_url=null) {
             vm.url = '';
             vm.success = '';
             angular.forEach(vm.method_calls, function (value, key) {
