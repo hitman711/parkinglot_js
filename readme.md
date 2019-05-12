@@ -1,5 +1,5 @@
 # parkinglot_js
-Parkinglot_js is a frontend of parking SAAS application which allow user to create, manage, maintain and rent parking spaces to the user. Owner can set custom prices based on duration (days, hour), pre paid charges and over due charge. User can rent parking place and also they can see all reservations. Application based on angularjs.
+Parkinglot_js is a frontend of parkinglot SAAS application which allow user to create, manage, maintain and rent parking spaces to the user. Owner can set custom prices based on duration (days, hour), pre paid charges and over due charge. User can rent parking place and also they can see all reservations. Application based on angularjs.
 
 Requirements
 ------------
